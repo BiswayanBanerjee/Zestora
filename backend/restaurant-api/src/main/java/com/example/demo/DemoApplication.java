@@ -24,10 +24,10 @@ public class DemoApplication {
 
         // ✅ Allow credentials and specific origins
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "https://zestora-9kan.onrender.com"
-        ));
+        config.setAllowedOriginPatterns(List.of(
+        "http://localhost:5173",
+        "https://zestora-9kan.onrender.com"
+    ));
 
         // ✅ Allow headers and methods
         config.addAllowedHeader("*");
