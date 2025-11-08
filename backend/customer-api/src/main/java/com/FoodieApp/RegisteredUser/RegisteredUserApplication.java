@@ -30,7 +30,10 @@ public class RegisteredUserApplication {
 		public FilterRegistrationBean filterRegistrationBean () {
 			final CorsConfiguration config = new CorsConfiguration();
 			config.setAllowCredentials(true);
-			config.addAllowedOrigin("http://localhost:5173");
+			config.setAllowedOrigins(List.of(
+            "http://localhost:5173",
+            "https://zestora-9kan.onrender.com" // ← your Render frontend URL
+        ));
 			config.addAllowedHeader("*");
 			config.addAllowedMethod("*");
 			final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
