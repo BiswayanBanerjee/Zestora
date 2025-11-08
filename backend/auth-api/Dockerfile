@@ -7,6 +7,9 @@ COPY pom.xml mvnw ./
 COPY .mvn .mvn
 COPY src ./src
 
+# ✅ Fix permission issue for mvnw (important for Render/Linux)
+RUN chmod +x mvnw
+
 # Build the project inside the container
 RUN ./mvnw clean package -DskipTests
 
