@@ -17,6 +17,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/restaurants")
+@CrossOrigin(
+    origins = {
+        "http://localhost:5173",
+        "https://zestora-9kan.onrender.com"  // ✅ Render frontend URL
+    },
+    allowCredentials = "true"
+)
 public class RestaurantController {
 
     @Autowired
