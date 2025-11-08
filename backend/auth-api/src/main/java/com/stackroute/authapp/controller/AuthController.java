@@ -11,7 +11,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth-app")
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+@CrossOrigin(
+    origins = {
+        "http://localhost:5173",
+        "https://zestora-9kan.onrender.com"  // ✅ Render frontend URL
+    },
+    allowCredentials = "true"
+)
 public class AuthController {
 
     @Autowired
