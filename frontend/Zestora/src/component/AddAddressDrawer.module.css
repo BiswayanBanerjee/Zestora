@@ -1,0 +1,116 @@
+.mapContainer {
+    width: 100%;
+    height: 420px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    background-color: #e0e0e0;
+}
+
+/* Fixed pin in center */
+.pinIcon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* GPS button (bottom-right) */
+.gpsButton {
+    position: absolute !important;
+    bottom: 40px;
+    right: 10px;
+    z-index: 5;
+    background: var(--mui-palette-background-paper);
+    color: var(--mui-palette-primary-main);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.gpsButton:hover {
+    background: var(--mui-palette-action-hover);
+    transform: scale(1.05);
+}
+
+/* Zoom controls (+/-) */
+.zoomControls {
+    position: absolute;
+    bottom: 90px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 6px;
+    z-index: 5;
+    background: var(--mui-palette-background-paper);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+    padding: 4px;
+    transition: background 0.3s ease;
+}
+
+.zoomControls button {
+    padding: 4px !important;
+}
+
+/* Scroll notice overlay */
+.scrollNotice {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.65);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    z-index: 4;
+}
+
+/* Address loading spinner */
+.loader {
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.65);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    z-index: 4;
+}
+
+.formFields {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.MuiDrawer-paper {
+    overflow: visible !important;
+}
+
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+  margin-bottom: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.closeButton {
+  color: var(--mui-palette-text-secondary);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.closeButton:hover {
+  color: var(--mui-palette-error-main);
+  transform: rotate(90deg);
+}

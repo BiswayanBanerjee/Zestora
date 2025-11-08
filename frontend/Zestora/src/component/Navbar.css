@@ -1,0 +1,89 @@
+/* Root navbar container */
+.navbar-root {
+  background-color: #ff5722;
+  padding: 2px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* Desktop navbar */
+.navbar-desktop {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow-x: auto;
+  white-space: nowrap;
+
+  /* hide scrollbars across browsers */
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.navbar-desktop::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+/* Each category list item */
+.navbar-item {
+  margin: 0 20px;
+  flex-shrink: 0;
+}
+
+/* Button inside navbar */
+.navbar-button {
+  background: none !important;
+  border: none !important;
+  color: white !important;
+
+  font-size: 1em !important;        /* match old size */
+  font-family: inherit !important;  /* inherit from parent instead of MUI default */
+  font-weight: normal !important;
+  text-transform: none !important;  /* prevent uppercase */
+
+  cursor: pointer;
+  padding: 10px 20px !important;
+  min-height: unset !important;
+  line-height: normal !important;   /* avoid extra vertical space */
+}
+
+.navbar-button:hover {
+  background-color: Gold !important;
+  border-radius: 5px;
+}
+
+
+/* Mobile menu button */
+.navbar-mobile-btn {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 8px;
+}
+
+/* Only show hamburger on xs, hide on sm+ */
+@media (min-width: 600px) {
+  .navbar-mobile-btn {
+    display: none;
+  }
+}
+@media (max-width: 599px) {
+  .navbar-desktop {
+    display: none;
+  }
+}
+
+/* Drawer styles */
+.drawer-list {
+  width: 220px;
+}
+
+.drawer-item {
+  cursor: pointer;
+}
+
+.drawer-text {
+  font-size: 1rem;
+}

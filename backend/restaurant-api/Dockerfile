@@ -1,8 +1,8 @@
 # Start from a lightweight OpenJDK base image
-FROM openjdk:25-jdk-slim
+FROM eclipse-temurin:21-jdk
 
 # Environment variable for port (Render will provide this)
-ENV PORT=10000
+# ENV PORT=10000
 
 # Set working directory inside the container
 WORKDIR /app

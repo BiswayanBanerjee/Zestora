@@ -1,11 +1,13 @@
 package com.FoodieApp.RegisteredUser.service;
 
 import com.FoodieApp.RegisteredUser.model.Customer;
+import com.FoodieApp.RegisteredUser.model.CustomerAddress;
 import com.FoodieApp.RegisteredUser.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -66,4 +68,8 @@ public class CustomerService {
     public void deleteCustomer(String id) {
         customerRepository.deleteById(id);
     }
+
+   
+
+
 }

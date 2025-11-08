@@ -1,0 +1,505 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  font-size: small;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular',
+    'Lucida Grande', 'Lucida Sans Unicode',
+    Geneva, Verdana, sans-serif;
+  /* position: sticky;
+  z-index: 1000;
+  top: 0;  
+  background: inherit; ensure background covers content under scroll */
+  width: 100%;
+  /* background stretches full width */
+}
+
+.headerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.noDecoration {
+  text-decoration: none;
+}
+
+/* Logo */
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 3.2em !important;
+  /* slightly smaller for balance */
+  font-weight: 800 !important;
+  /* extra bold */
+  font-family: 'Poppins', sans-serif;
+  /* clean modern font */
+  background: linear-gradient(90deg, #ff5722, #f8b400);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* gradient text */
+  letter-spacing: 1px;
+  /* spacing for readability */
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
+  /* subtle depth */
+}
+
+
+/* Search Box */
+.searchBox {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  margin: 0 20px;
+  transition: all 0.4s ease;
+}
+
+.searchBox.expanded {
+  flex: 1;
+  justify-content: center;
+}
+
+.searchField {
+  width: 100%;
+  max-width: 450px;
+  min-width: 180px;
+  transition: max-width 0.3s ease;
+}
+
+/* Shrink before mobile */
+@media (max-width: 1024px) {
+  .searchField {
+    max-width: 380px;
+  }
+}
+
+@media (max-width: 900px) {
+  .searchField {
+    max-width: 300px;
+  }
+}
+
+/* Right controls */
+.rightControls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Search input styling */
+/* .searchField .MuiOutlinedInput-root {
+  border-radius: 4px;
+  background-color: var(--mui-palette-background-paper);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.2s ease-in-out;
+} */
+
+.searchField .MuiOutlinedInput-root:hover fieldset {
+  border-color: rgba(255, 255, 255, 0.23);
+}
+
+.searchField .MuiOutlinedInput-root.Mui-focused fieldset {
+  border-color: rgba(255, 255, 255, 0.23);
+}
+
+.searchField input {
+  color: var(--mui-palette-text-primary);
+}
+
+/* Buttons */
+.logoutBtn {
+  background-color: #ff5722 !important;
+}
+
+.loginBtn {
+  background-color: #4caf50 !important;
+}
+
+.profileContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 5px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.profileContainer:hover {
+  background-color: rgba(238, 233, 233, 0.12);
+}
+
+.profileIcon {
+  font-size: 24px;
+  color: inherit;
+}
+
+.userName {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: inherit;
+}
+
+/* Profile Menu */
+.profileMenu {
+  margin-top: 12px;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px !important;
+  overflow: visible !important;
+  position: relative;
+  border-top: 2px solid #ff5722;
+}
+
+.profileMenu::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #ff5722;
+}
+
+.profileMenuItem {
+  font-weight: 500;
+  padding: 14px 28px;
+  font-size: 15px;
+  color: var(--mui-palette-text-primary);
+  transition: background-color 0.2s ease;
+}
+
+.profileMenuItem:hover {
+  background-color: rgba(255, 87, 34, 0.08);
+}
+
+/* Mobile mode */
+@media (max-width: 768px) {
+  .searchBox {
+    display: none;
+  }
+
+  .searchIconContainer {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .userName {
+    display: none;
+  }
+
+  .rightControls {
+    gap: 8px;
+  }
+
+  /* .callIconContainer { order: 1; } */
+  .rightControls {
+    order: 2;
+  }
+
+  .cartIconContainer {
+    order: 3;
+  }
+
+  .profileContainer {
+    order: 4;
+  }
+
+  .searchIconContainer {
+    order: 5;
+  }
+}
+
+/* Search active (mobile full search mode) */
+@media (max-width: 768px) {
+  .header.searchActive {
+    justify-content: center;
+  }
+
+  .header.searchActive .logoContainer,
+  .header.searchActive .rightControls,
+  .header.searchActive .searchIconContainer {
+    display: none !important;
+  }
+
+  .header.searchActive .searchBox {
+    display: flex !important;
+    flex: 1;
+    margin: 0;
+    animation: expandSearch 0.3s ease forwards;
+  }
+
+  .header.searchActive .searchField {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  @keyframes expandSearch {
+    from {
+      max-width: 0;
+      opacity: 0;
+    }
+
+    to {
+      max-width: 100%;
+      opacity: 1;
+    }
+  }
+}
+
+/* Desktop: hide search icon */
+.searchIconContainer {
+  display: none;
+}
+
+
+/* Location icon in search */
+.roomIcon {
+  color: #ff5722;
+  font-size: 20px;
+  margin-right: 4px;
+  /* mr: 0.5 in MUI = 4px */
+}
+
+.customerCity {
+  margin-right: 4px;
+  margin-top: 10px;
+}
+
+.arrowDownIcon {
+  font-size: 18px;
+}
+
+.locationDivider {
+  border-left: 1px solid #ccc;
+  height: 20px;
+  margin: 0 4px;
+  /* mx: 1 in MUI = 4px */
+}
+
+/* Theme icons */
+.themeIconLight {
+  color: #fbc02d;
+}
+
+.themeIconDark {
+  color: #fff;
+}
+
+.themeIconSystem {
+  color: #fff;
+}
+
+
+.searchBox {
+  position: relative;
+  /* needed for dropdown */
+  width: 100%;
+  max-width: 450px;
+  z-index: 1500;
+}
+
+.searchField {
+  width: 100%;
+}
+
+/* Optional polish to make dropdown appear above other elements */
+.MuiPaper-root {
+  z-index: 1300 !important;
+}
+
+.searchLocationBox {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.searchLocationBox:hover {
+  opacity: 0.85;
+}
+
+.locationDivider {
+  height: 24px;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.3);
+  margin-left: 8px;
+}
+
+
+.searchDropdown {
+  position: relative;
+  /* ✅ relative now, not absolute */
+  width: 100%;
+  padding: 8px 0;
+  border-radius: 12px;
+  box-shadow: none;
+  max-height: none;
+  overflow: visible;
+}
+
+
+.restaurantItem {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+/* .restaurantItem:hover {
+  background-color: #3a3030;
+} */
+
+.restaurantImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.restaurantDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.restaurantName {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.newBadge {
+  background-color: #00d97e;
+  color: #fff;
+}
+
+.diningBadge {
+  background-color: #ffe29a;
+  color: #222;
+}
+
+.deliveryBadge {
+  background-color: #b2f2bb;
+  color: #222;
+}
+
+.restaurantAddress {
+  color: #666;
+  font-size: 13px;
+}
+
+.availableText {
+  color: #666;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.notAvailableText {
+  color: #aaa;
+  font-size: 13px;
+}
+
+
+.dropdownBox {
+  background: transparent !important;
+  /* ✅ full transparency */
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdownPaper {
+
+  border-radius: 0 0 12px 12px;
+  overflow-y: auto;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+
+
+/* ===== Harmonized Scrollbar (Matches Search Field) ===== */
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+}
+
+/* Track — same color as search field */
+::-webkit-scrollbar-track {
+  background: #f9fafb;
+  /* Light mode searchfield color */
+  border-radius: 8px;
+}
+
+/* Thumb */
+::-webkit-scrollbar-thumb {
+  background: #b0b0b0;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+/* ===== DARK MODE ===== */
+html.dark ::-webkit-scrollbar-track,
+body.dark ::-webkit-scrollbar-track,
+.dark-mode ::-webkit-scrollbar-track,
+:root[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #1e1e1e !important;
+  /* same as dark searchfield */
+}
+
+html.dark ::-webkit-scrollbar-thumb,
+body.dark ::-webkit-scrollbar-thumb,
+.dark-mode ::-webkit-scrollbar-thumb,
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #555 !important;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover,
+body.dark ::-webkit-scrollbar-thumb:hover,
+.dark-mode ::-webkit-scrollbar-thumb:hover,
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #777 !important;
+}
+
+/* ===== FIREFOX ===== */
+html.dark,
+body.dark,
+.dark-mode,
+:root[data-theme="dark"] {
+  scrollbar-color: #555 #1e1e1e !important;
+  /* thumb, track */
+  scrollbar-width: thin;
+}

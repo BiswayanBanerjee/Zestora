@@ -1,0 +1,336 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 64px 0;
+  gap: 30px;
+  background: #f5f5f5;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  /* centers it horizontally */
+}
+
+.leftSection {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.rightSection {
+  flex: 1.2;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+
+.deliveryBox,
+.paymentBox {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.08);
+}
+
+.deliveryHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.changeBtn {
+  background: none;
+  border: none;
+  color: #fc8019;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.addressTitle {
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.addressDetails {
+  font-size: 14px;
+  color: #555;
+}
+
+.deliveryTime {
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+.proceedBtn {
+  font-weight: 600 !important;
+  background: #60b246 !important;
+  color: white !important;
+  margin-bottom: 19px !important;
+  padding: 13px 0 !important;
+}
+
+.cartCard {
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: 1px solid var(--mui-palette-divider);
+  overflow: hidden;
+  /* ensures border wraps tightly */
+  background: var(--mui-palette-card-bg);
+}
+
+/* Remove default CardContent padding */
+.cardContent {
+  padding: 0 !important;
+}
+
+/* Like .orderCardTop */
+.itemInfo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  /* uniform spacing inside */
+}
+
+/* Like .orderCardBottom */
+.itemDetailss {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px dashed var(--mui-palette-divider);
+  padding: 14px 18px;
+}
+
+.itemActions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.itemText {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.itemImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.itemInfo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.itemName {
+  font-weight: 600;
+}
+
+.itemPrice {
+  color: #444;
+  font-size: 14px;
+}
+
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border: 1px solid var(--mui-palette-divider);
+}
+
+.deleteBtn {
+  color: red !important;
+}
+
+.billBox {
+  border-top: 1px solid #ddd;
+  /* margin-top: 15px;
+  padding-top: 10px; */
+}
+
+.totalPay {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* ✅ Responsive layout */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column-reverse;
+  }
+
+  .rightSection {
+    position: static;
+    width: 100%;
+  }
+}
+
+
+.billBox,
+.discountBox,
+.totalPay {
+  padding: 16px 20px;
+  border-top: 1px dashed var(--mui-palette-divider);
+  font-family: var(--mui-font-family);
+}
+
+.billBox h5 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.billRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 6px 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.discountBox {
+  margin-top: 0;
+}
+
+.free{
+  color: #60b246;
+}
+
+.totalPay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  padding: 16px 20px;
+  border-top: 1px dashed var(--mui-palette-divider);
+  background: var(--mui-palette-background-paper);
+}
+
+
+
+.addressGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.addressCard {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 16px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.addressCard:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.addressHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addressIcon {
+  font-size: 18px;
+  margin-top: 2.3px;
+}
+
+.addressText {
+  color: #555;
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.deliveryMins {
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.deliverHereBtn {
+  background-color: #60b246;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deliverHereBtn:hover:not(:disabled) {
+  background-color: #4c993a;
+}
+
+.deliverHereBtn:disabled,
+.disabledBtn {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.addNew {
+  border: 1px dashed #ccc;
+  text-align: left;
+}
+
+.addNewHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.addNewIconWrapper {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.locationIcon {
+  margin-bottom: 3px;
+}
+
+.plusBadge {
+  position: absolute;
+  top: -2px;
+  right: 1.5px;
+  background: #4caf50;
+  color: #fff;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.plusBadge svg {
+  font-size: 12px;
+}

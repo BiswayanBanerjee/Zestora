@@ -1,0 +1,217 @@
+/* ==============================
+   DishCard – Name + Add inline
+   ============================== */
+
+/* Main Card */
+.dishCard {
+  width: 100%;
+  min-width: 340px;
+  /* ⬅️ prevents shrinking too much */
+  max-width: 450px;
+  /* ⬅️ keeps consistent width */
+  min-height: 370px;
+  /* ⬅️ ensures proper structure */
+  max-height: 550px;
+  /* ⬅️ prevents stretching */
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: box-shadow 0.2s ease;
+  cursor: pointer;
+  background: var(--mui-palette-background-paper);
+  color: var(--mui-palette-text-primary);
+  font-family: var(--mui-font-family);
+  margin: 12px auto;
+  /* ⬅️ adds spacing between cards */
+}
+
+.dishCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dishCard.notAvailable {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dishImageWrapper {
+  width: 100%;
+  height: auto;
+  /* ✅ allow natural height */
+  overflow: hidden;
+}
+
+.dishCardImage {
+  width: 100%;
+  height: auto;
+  /* ✅ scale proportionally */
+  object-fit: cover;
+  display: block;
+}
+
+
+/* Content Section */
+.dishContent {
+  padding: 12px 16px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: var(--mui-font-family);
+  /* ✅ inherit font */
+}
+
+.dishContent .MuiTypography-root {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: var(--mui-palette-text-primary);
+  font-family: var(--mui-font-family);
+  /* ✅ theme font */
+}
+
+/* Header Row */
+.dishHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+/* Dish Name */
+.dishTitle {
+  font-weight: 600 !important;
+  font-size: 16px;
+  text-align: left;
+  color: var(--mui-palette-text-primary);
+  font-family: var(--mui-font-family);
+  /* ✅ */
+}
+
+/* Add Button */
+.addBtun {
+  border: 1px solid #60b246 !important;
+  color: #60b246 !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  padding: 2px 35px !important;
+  background: transparent !important;
+  font-size: 16px !important;
+  line-height: 1.2;
+  font-family: var(--mui-font-family);
+  /* ✅ */
+}
+
+/* Price Section */
+.dishPriceText {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  margin-bottom: 6px !important;
+  color: var(--mui-palette-text-primary);
+  font-family: var(--mui-font-family);
+  /* ✅ */
+}
+
+.originalPrice {
+  text-decoration: line-through;
+  color: var(--mui-palette-text-secondary);
+  font-weight: 400;
+}
+
+.discountPrice {
+  font-weight: 600;
+  color: var(--mui-palette-text-primary);
+}
+
+.discountTag {
+  color: #ff5722;
+  font-weight: 600;
+}
+
+/* Rating */
+.dishRating {
+  font-size: 12px !important;
+  color: #60b246 !important;
+  margin-bottom: 6px !important;
+  font-family: var(--mui-font-family);
+  /* ✅ */
+}
+
+/* Description */
+.dishFullDescription {
+  font-size: 13px;
+  color: var(--mui-palette-text-secondary);
+  line-height: 1.4;
+  text-align: left;
+  margin: 0 !important;
+  font-family: var(--mui-font-family);
+  /* ✅ */
+}
+
+/* Not Available */
+.notAvailableText {
+  font-weight: bold;
+  color: #d32f2f;
+  font-size: 14px;
+  margin-top: 6px !important;
+  font-family: var(--mui-font-family);
+  /* ✅ */
+}
+
+/* ====== Top-right icons (owner mode) ====== */
+.deleteBtn,
+.editBtn {
+  position: absolute !important;
+  right: 8px !important;
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.deleteBtn {
+  top: 8px !important;
+}
+
+.editBtn {
+  top: 48px !important;
+}
+
+/* ====== Edit Mode ====== */
+.dishCard.editMode {
+  max-width: 360px;
+  padding: 16px;
+  height: auto;
+  background: var(--mui-palette-background-paper);
+  color: var(--mui-palette-text-primary);
+  font-family: var(--mui-font-family);
+  /* ✅ */
+}
+
+.previewImg {
+  margin-top: 16px;
+  border: 1px solid var(--mui-palette-divider);
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  border-radius: 6px;
+}
+
+.chooseImgBtn {
+  margin-top: 16px !important;
+}
+
+.editOptions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.editButtons {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+}

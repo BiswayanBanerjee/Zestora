@@ -1,0 +1,776 @@
+/* Account Dashboard — theme-aware Swiggy-style layout */
+/* Uses global CSS variables set in theme.js via useAppTheme */
+
+.pageWrap {
+  min-height: 100vh;
+  background: var(--swiggy-banner) !important;
+  color: var(--mui-palette-text-primary);
+  font-family: "Roboto", Arial, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Header (Swiggy-style banner) */
+.headerBanner {
+  padding: 48px 72px;
+  color: #fff;
+  transition: background 0.3s ease;
+}
+
+.headerInner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.headerAvatarRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sidebarAvatarRow {
+  width: 85px !important;
+  height: 85px !important;
+  background: rgba(255, 255, 255, 0.89) !important;
+  font-size: 3rem !important;
+  color: var(--swiggy-banner) !important;
+  font-weight: 400;
+}
+
+.profileTitle {
+  margin: 0 0 0px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.profileSub {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+}
+
+.dot {
+  opacity: 0.7;
+}
+
+.editBtn {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 0.95rem;
+  border: 1px solid white !important;
+  padding: 8px 20px !important;
+  font-weight: 700 !important;
+  border-radius: 0px !important;
+  background: transparent !important;
+  transition: background 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out;
+  will-change: background, color;
+  cursor: pointer;
+}
+
+.editBtn:hover {
+  color: var(--swiggy-banner) !important;
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  transition: background 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
+}
+
+
+/* Layout */
+.contentWrap {
+  display: flex;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0px auto 0px;
+  padding: 0 0px;
+  background: var(--swiggy-banner) !important;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background: var(--mui-palette-card-bg);
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 8px 18px rgba(14, 30, 37, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: background 0.3s ease;
+  /* ❌ No relative positioning here */
+}
+
+.sidebarContent {
+  position: sticky;
+  top: 25px;
+  /* Adjust based on header height */
+  width: 100%;
+  z-index: 10;
+}
+
+.sidebarHeader {
+  background: var(--mui-palette-card-bg);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--mui-palette-divider);
+}
+
+.sidebarAvatar {
+  width: 52px !important;
+  height: 52px !important;
+  background: var(--mui-palette-action-hover);
+}
+
+.sidebarName .nameText {
+  font-weight: 700;
+}
+
+.smallText {
+  color: var(--mui-palette-text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Sidebar Menu */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 10px;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-weight: 600;
+  color: var(--mui-palette-text-primary);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.menuItem:hover {
+  background: var(--mui-palette-action-hover);
+}
+
+.menuItemActive {
+  background: rgba(47, 111, 127, 0.08);
+  color: var(--swiggy-banner);
+  box-shadow: inset 4px 0 var(--swiggy-banner);
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* Main Content */
+.mainContent {
+  flex: 1;
+  background: var(--mui-palette-card-bg);
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 8px 18px rgba(14, 30, 37, 0.06);
+  transition: background 0.3s ease, color 0.3s ease;
+  min-height: 700px;
+}
+
+/* Search */
+.searchRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+/* Header row containing title + search */
+.ordersHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+  /* allows wrapping on very small screens */
+}
+
+.ordersHeaderRow .sectionTitle {
+  margin: 0;
+}
+
+/* Existing search box reused */
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--mui-palette-input-bg);
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 360px;
+  border: 1px solid var(--mui-palette-divider);
+  transition: background 0.3s ease, border 0.3s ease;
+}
+
+.searchBox input {
+  border: none;
+  outline: none;
+  flex: 1;
+  background: transparent;
+  color: var(--mui-palette-text-primary);
+  font-size: 0.95rem;
+}
+
+/* Section Titles */
+.sectionTitle {
+  margin: 18px 0 8px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--mui-palette-text-primary);
+}
+
+/* Orders List */
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Order Card */
+.orderCard {
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--mui-palette-card-bg);
+  transition: background 0.3s ease, border 0.3s ease;
+}
+
+.orderCardTop {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+  align-items: flex-start;
+}
+
+.thumb {
+  width: 120px;
+  height: 96px;
+  background: var(--mui-palette-action-hover);
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.thumbPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--mui-palette-action-hover), transparent);
+}
+
+.orderMeta {
+  flex: 1;
+}
+
+.restaurantTitle {
+  margin: 0 0 4px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--mui-palette-text-primary);
+}
+
+.restaurantSub {
+  color: var(--mui-palette-text-secondary);
+  margin-bottom: 6px;
+}
+
+.viewDetails {
+  color: var(--swiggy-banner);
+  font-weight: 700;
+  margin-top: 6px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.viewDetails:hover {
+  opacity: 0.8;
+}
+
+.orderStatus {
+  gap: 12px;
+  display: flex;
+}
+
+.deliveredText {
+  color: var(--mui-palette-text-primary);
+}
+
+.statusDot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #1fc05f;
+  display: inline-block;
+  margin-top: 2px;
+}
+
+.totalPaidd {
+  display: none;
+}
+
+/* Order Bottom */
+.orderCardBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-top: 1px dashed var(--mui-palette-divider);
+}
+
+.itemsText {
+  color: var(--mui-palette-text-primary);
+  font-size: 0.95rem;
+}
+
+.orderActions {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.actionButtons button {
+  margin-left: 6px;
+}
+
+.totalPaid {
+  color: var(--mui-palette-text-primary);
+}
+
+/* Addresses */
+.addresses {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.addressCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--mui-palette-divider);
+  background: var(--mui-palette-card-bg);
+}
+
+.addressReceiver {
+  font-weight: 700;
+}
+
+/* .addressActions button {
+  margin-left: 6px;
+} */
+
+/* Placeholders & Empty State */
+.placeholder {
+  padding: 20px;
+}
+
+.empty {
+  padding: 20px;
+  color: var(--mui-palette-text-secondary);
+  text-align: center;
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  color: var(--mui-palette-text-secondary);
+  font-size: 1.2rem;
+}
+
+.orderCardMiddle {
+  display: none;
+}
+
+.orderStatuss {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  .contentWrap {
+    flex-direction: column;
+    margin: -10px 0px 0px;
+  }
+
+  .sidebar {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+  }
+
+  .mainContent {
+    padding: 18px;
+  }
+
+  .orderCardTop {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5px;
+  }
+
+  .orderStatus {
+    width: 100%;
+    text-align: center;
+  }
+
+  .searchBox {
+    width: 100%;
+  }
+
+  .totalPaidd {
+    display: flex;
+    font-size: 0.85rem;
+    color: var(--mui-palette-text-secondary);
+  }
+
+  .totalPaid {
+    display: none;
+  }
+
+  .orderSummary {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .orderCardMiddle {
+    display: block;
+    padding: 14px 18px;
+    border-top: 1px dashed var(--mui-palette-divider);
+  }
+
+  .itemsText {
+    display: none;
+  }
+
+  .orderActions {
+    width: 100%;
+  }
+
+  .actionButtons {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center;
+    width: 100% !important;
+    background: transparent;
+    /* helps visualize width while testing */
+  }
+
+  /* Make buttons expand equally */
+  .actionButtons button {
+    flex: 1 1 49% !important;
+    max-width: 49%;
+    margin: 0;
+  }
+}
+
+.addressEditForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.addressInput {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: var(--mui-palette-background-default);
+  color: var(--mui-palette-text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.addressInput:focus {
+  outline: none;
+  border-color: var(--swiggy-banner);
+}
+
+.addressGridRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.addressActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.addressActionss {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.fetchLocation {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.addressType {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* ✅ Responsive header banner */
+@media (max-width: 1024px) {
+  .headerBanner {
+    padding: 36px 48px;
+  }
+
+  .profileTitle {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* .headerBanner {
+    padding: 28px 24px;
+  } */
+
+  /* .headerInner {
+    flex-direction: row;
+    gap: 20px;
+    width: 100%;
+  } */
+
+  .headerAvatarRow {
+    display: none;
+  }
+
+  .sidebarAvatarRow {
+    width: 70px !important;
+    height: 70px !important;
+    font-size: 2.2rem !important;
+  }
+
+  .profileTitle {
+    font-size: 1.5rem;
+  }
+
+  .profileSub {
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+  }
+
+  .editBtn {
+    width: auto;
+    padding: 8px 20px !important;
+  }
+
+  .headerActions {
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  /* .headerBanner {
+    padding: 20px;
+  } */
+
+  .profileTitle {
+    font-size: 1.3rem;
+  }
+
+  .sidebarAvatarRow {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 1.8rem !important;
+  }
+
+  .editBtn {
+    font-size: 0.7rem !important;
+    padding: 8px 20px !important;
+  }
+
+  .headerInner {
+    margin-bottom: 5px !important;
+  }
+
+  .thumb {
+    display: none;
+  }
+
+  .orderStatus {
+    display: none;
+  }
+
+  .orderStatuss {
+    display: block;
+    gap: 5px;
+    display: flex;
+    font-size: 0.85rem;
+    color: var(--mui-palette-text-secondary);
+  }
+
+  .deliveredText {
+    color: var(--mui-palette-text-secondary);
+  }
+
+  .orderMeta {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .paid {
+    display: none;
+  }
+
+  .viewDetails {
+    display: none;
+  }
+
+  .orderId {
+    display: none;
+  }
+
+  .orderIdd {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--mui-palette-text-secondary);
+  }
+
+  .itemsTextt {
+    color: var(--mui-palette-text-secondary);
+  }
+
+  .statusDott {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #1fc05f;
+    display: inline-block;
+    margin-top: 3px;
+  }
+
+  .priceArrow {
+    font-size: 1.1rem;
+    color: var(--mui-palette-text-secondary);
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+    margin-bottom: 1.9px;
+  }
+
+  .totalPaidd {
+    display: block;
+  }
+
+  /* .totalPaidd:hover .priceArrow {
+  transform: translateX(2px);
+} */
+
+
+}
+
+@media (max-width:700px) {
+  .addressGridRow {
+    grid-template-columns: 1fr;
+  }
+
+  .addressType {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .addressActionss {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+
+/* .fetchLocationBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+} */
+
+/* ✅ Default: show text, hide icon */
+.fetchText {
+  display: inline;
+}
+
+.gpsIcon {
+  display: none !important;
+}
+
+/* ✅ On mobile (≤768px): hide text, show icon only */
+@media (max-width: 480px) {
+  .fetchText {
+    display: none !important;
+  }
+
+  .gpsIcon {
+    display: inline-block !important;
+    font-size: 1.3rem;
+  }
+
+  .fetchLocationBtn {
+    padding: 6.2px 12px !important;
+    min-width: 0 !important;
+    /* shrink button width */
+  }
+
+  .fetchLocation {
+    padding: 0px !important;
+    min-width: 0 !important;
+    /* shrink button width */
+  }
+}

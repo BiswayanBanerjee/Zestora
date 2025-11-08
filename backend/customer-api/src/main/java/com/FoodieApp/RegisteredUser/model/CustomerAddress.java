@@ -1,8 +1,13 @@
 package com.FoodieApp.RegisteredUser.model;
 
 import java.util.List;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -15,8 +20,10 @@ import lombok.NoArgsConstructor;
 @Document
 public class CustomerAddress {
 
-    private List<String> receiverDetails;
-    private List<String> saveAddressAs;
+    @Id
+    private String addressId;
+    private String receiverName;
+    private String saveAddressAs;
     private String house_number;
     private String street;
     private String landMark;
@@ -24,7 +31,5 @@ public class CustomerAddress {
     private String city;
     private String state;
     private String country;
-
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)  // Geospatial indexing for querying by location
-    private List<Double> location;
+    private GeoJsonPoint location;
 }

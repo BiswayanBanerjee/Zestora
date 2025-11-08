@@ -1,0 +1,115 @@
+.restaurantView {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* ✅ keep cards, filters, name centered as a block */
+  margin-top: 5px;
+  background-color: var(--mui-palette-background-paper);
+  padding-bottom: 2rem;
+}
+.restaurantName {
+  margin-bottom: 50px !important;
+  margin-top: 55px !important;
+  font-weight: 600 !important;
+
+  width: 91%;           /* ✅ same shrink rate as filter + cards */
+  max-width: 900px;     /* ✅ cap at desktop */
+  margin-left: auto;
+  margin-right: auto;
+
+  text-align: left;     /* ✅ keep text aligned left */
+}
+
+/* 🔎 Search + Filter Bar */
+.filterBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+
+  width: 91%;          /* ✅ same as DishListCard */
+  max-width: 900px;    /* ✅ cap on desktop */
+  margin: 0 auto 20px auto;
+}
+
+.searchInput {
+  flex: 1;
+  background-color: var(--mui-palette-background-paper);
+}
+.searchInput .MuiOutlinedInput-root fieldset {
+  border-width: 1px !important;
+}
+.searchInput .MuiOutlinedInput-root.Mui-focused fieldset {
+  border-color: var(--mui-palette-grey-500) !important;
+  border-width: 1px !important;
+}
+
+/* VEG SWITCH */
+.vegSwitch .MuiSwitch-thumb {
+  background-color: green !important;
+  border-radius: 4px !important;
+}
+/* NON-VEG SWITCH */
+.nonVegSwitch .MuiSwitch-thumb {
+  background-color: red !important;
+  border-radius: 4px !important;
+}
+/* Track stays grey before toggle */
+.vegSwitch .MuiSwitch-track,
+.nonVegSwitch .MuiSwitch-track {
+  background-color: #5e5a5a !important;
+  opacity: 1 !important;
+}
+/* Track turns green when Veg is ON */
+.vegSwitch .Mui-checked + .MuiSwitch-track {
+  background-color: green !important;
+  opacity: 1 !important;
+}
+/* Track turns red when Non-Veg is ON */
+.nonVegSwitch .Mui-checked + .MuiSwitch-track {
+  background-color: red !important;
+  opacity: 1 !important;
+}
+
+.dishGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  width: 100%;
+}
+
+.addDishCard {
+  max-width: 315px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+.addDishCard:hover {
+  transform: scale(1.05);
+}
+.addDishCardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.addDishIcon {
+  font-size: 40px !important;
+}
+.chooseImageBtn {
+  margin-top: 16px !important;
+}
+.dishImagePreview {
+  margin-top: 16px;
+  border: 1px solid #eeeeee;
+}
+.addDishActions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}

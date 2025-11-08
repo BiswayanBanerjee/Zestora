@@ -1,0 +1,106 @@
+/* Container (flexbox layout) */
+.restaurantGridContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px 0;
+  max-width: 1200px;
+  margin: 0 auto; /* centers it horizontally */
+}
+
+/* Each item (responsive width) */
+.restaurantGridItem {
+  flex: 1 1 calc(25% - 15px); /* 4 per row on desktop */
+  max-width: calc(25% - 15px);
+}
+
+/* Tablet: 2 per row */
+@media (max-width: 1024px) {
+  .restaurantGridItem {
+    flex: 1 1 calc(50% - 20px);
+    max-width: calc(50% - 20px);
+  }
+}
+
+/* Mobile: 1 per row */
+@media (max-width: 600px) {
+  .restaurantGridItem {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
+/* Restaurant Card */
+.restaurantCard {
+  /* background: #fff; */
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.restaurantCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* Image wrapper (fixed height for consistency) */
+.restaurantImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.restaurantImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Overlay badges */
+.badgeTopLeft {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #ff5722;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.badgeBottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  color: #fff;
+  font-weight: 600;
+  text-align: center;
+  padding: 6px;
+  font-size: 14px;
+}
+
+/* Restaurant details */
+.restaurantDetails {
+  padding: 10px 8px;
+  flex-grow: 1;
+}
+
+.restaurantTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.restaurantMeta {
+  margin-bottom: 4px;
+  color: #333;
+}

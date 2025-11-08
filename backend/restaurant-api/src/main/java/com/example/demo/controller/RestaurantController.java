@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
+
 import com.example.demo.model.Restaurant;
 import com.example.demo.model.Dish;
 import com.example.demo.service.RestaurantService;
@@ -378,5 +381,30 @@ public ResponseEntity<Map<String, Map<String, Boolean>>> getRestaurantStatuses(@
     }
     return ResponseEntity.ok(statusesMap);
 }
+
+private final String orsApiKey = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjQ0NTZhOGNjNDdjZDRlNWY5ZTAxYTVlMGM2YzM0OGY3IiwiaCI6Im11cm11cjY0In0";
+
+    @GetMapping("/eta")
+    public ResponseEntity<?> getETA(
+            @RequestParam String start,
+            @RequestParam String end) {
+
+        try {
+            String url = "https://api.openrouteservice.org/v2/directions/driving-car"
+                    + "?api_key=" + orsApiKey
+                    + "&start=" + start
+                    + "&end=" + end;
+
+            RestTemplate restTemplate = new RestTemplate();
+            
+            Object response = restTemplate.getForObject(url, Object.class);
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching ETA: " + e.getMessage());
+        }
+    }
+
 
 }

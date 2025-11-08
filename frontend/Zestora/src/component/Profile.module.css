@@ -1,0 +1,83 @@
+.profileSection {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.profileField {
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.label {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr auto; /* value takes full width, icon stays fixed */
+  align-items: center;
+  column-gap: 8px; /* space between text/input and icon */
+  position: relative;
+  width: 85%;
+}
+
+.fieldRow p,
+.fieldRow .editInput {
+  font-size: 0.95rem;
+  color: var(--mui-palette-text-primary);
+  margin: 0;
+  width: 100%;
+}
+
+/* Editable input */
+.editInput {
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 4px;
+  background: var(--mui-palette-background-default);
+  padding: 6px 8px;
+  outline: none;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+.editInput:focus {
+  border-color: #fc8019;
+}
+
+/* Edit icon style */
+.editIcon {
+  color: #fc8019;
+  justify-self: end; /* ensures all icons align to right */
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.editIcon:hover {
+  color: #e56f11;
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerText h2{
+  margin-bottom: 0px;
+}
+
+.headerText p{
+  margin-top: 0px;
+  font-size: 0.94rem !important;
+}
