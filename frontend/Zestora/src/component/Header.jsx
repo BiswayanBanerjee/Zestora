@@ -10,6 +10,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
+import AuthDrawer from "./AuthDrawer";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -43,6 +44,7 @@ const Header = ({ setThemePreference }) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const { data: allRestaurants = [] } = useGetRestaurantsQuery(); // fetch all
+  const [authOpen, setAuthOpen] = useState(false);
   // City dropdown
   const [cityAnchorEl, setCityAnchorEl] = useState(null);
   const isCityMenuOpen = Boolean(cityAnchorEl);
@@ -112,12 +114,13 @@ const Header = ({ setThemePreference }) => {
   const isLoggedIn = !!token;
 
   // ✅ Cart count from RTK Query
-  const { data: cartItems = [] } = useGetCartQuery(user?.email, {
-    skip: !user?.email,
-    pollingInterval: 5000,
-  });
+  // ✅ Cart count from RTK Query
+const { data: cartItems } = useGetCartQuery(user?.email, {
+  skip: !user?.email,
+  pollingInterval: 5000,
+});
+const cartCount = Array.isArray(cartItems) ? cartItems.length : 0;
 
-  const cartCount = cartItems.length;
 
   // ✅ Sync customer data once user logs in
   useEffect(() => {
@@ -161,9 +164,7 @@ const Header = ({ setThemePreference }) => {
   };
 
   // Handle Login
-  const handleLogin = () => {
-    navigate("/login");
-  };
+  const handleLogin = () => setAuthOpen(true);
 
   // Handle search
   const handleSearchChange = (e) => {
@@ -863,6 +864,7 @@ const Header = ({ setThemePreference }) => {
           </Box>
         )}
       </div>
+      <AuthDrawer open={authOpen} onClose={() => setAuthOpen(false)} />
     </Box>
   );
 };

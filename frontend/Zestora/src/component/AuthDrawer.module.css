@@ -1,0 +1,58 @@
+.drawerPaper {
+  width: 360px;
+  padding: 24px;
+  background-color: var(--mui-palette-background-paper);
+  color: var(--mui-palette-text-primary);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-weight: 600;
+}
+
+.divider {
+  margin: 12px 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.heading {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.primaryBtn {
+  background-color: #fc8019 !important;
+  color: white !important;
+}
+
+.primaryBtn:hover {
+  background-color: #e56f11 !important;
+}
+
+.secondaryBtn {
+  color: #fc8019 !important;
+  border-color: #fc8019 !important;
+}
+
+.secondaryBtn:hover {
+  background-color: rgba(252, 128, 25, 0.1) !important;
+}
+
+.textBtn {
+  color: #fc8019 !important;
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 0.9rem;
+}
