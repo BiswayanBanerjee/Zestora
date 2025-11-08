@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Button, Drawer, IconButton, List, ListItem, ListItemText } from "@mui/material";
 import { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import "./navbar.css"; // import the CSS file
+import "./Navbar.css"; // import the CSS file
 
 const Navbar = ({ products, onSearchDish }) => {
   // Extract unique categories from all dishes across restaurants
