@@ -12,6 +12,13 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/customers")
+@CrossOrigin(
+    origins = {
+        "http://localhost:5173",
+        "https://zestora-9kan.onrender.com"  // ✅ Render frontend URL
+    },
+    allowCredentials = "true"
+)
 public class CustomerController {
 
     private final CustomerService customerService;
