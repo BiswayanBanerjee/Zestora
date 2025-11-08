@@ -1,17 +1,25 @@
-# Start from a lightweight OpenJDK base image
-FROM eclipse-temurin:21-jdk
-
-# Environment variable for port (Render will provide this)
-# ENV PORT=10000
-
-# Set working directory inside the container
+# ---------- Stage 1: Build the JAR ----------
+FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
 
-# Copy the JAR file built by Maven into the container
-COPY target/*.jar app.jar
+# Copy Maven wrapper and project files
+COPY pom.xml mvnw ./
+COPY .mvn .mvn
+COPY src ./src
 
-# Expose the port
-EXPOSE ${PORT}
+# Give execute permission to mvnw
+RUN chmod +x mvnw
 
-# Command to run the app
+# Build the project inside Docker
+RUN ./mvnw clean package -DskipTests
+
+# ---------- Stage 2: Runtime ----------
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+
+# Copy built JAR from the builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
+EXPOSE ${PORT:-8084}
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
