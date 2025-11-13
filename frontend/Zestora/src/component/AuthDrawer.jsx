@@ -28,6 +28,7 @@ import { auth, provider } from "./firebaseConfig";
 import { signInWithPopup } from "firebase/auth";
 import { useGetCustomerByIdQuery } from "./redux/services/customerApi";
 import { customerApi } from "./redux/services/customerApi";
+import { useLazyCheckUserQuery } from "./redux/services/authApi";
 
 import { store } from "./redux/store";
 
@@ -47,6 +48,7 @@ const AuthDrawer = ({ open, onClose }) => {
   const [googleUserData, setGoogleUserData] = useState(null);
   const [userCheckResult, setUserCheckResult] = useState(null);
   const [loadingCheck, setLoadingCheck] = useState(false);
+  const [triggerCheckUser] = useLazyCheckUserQuery();
 
   const {
     register,
@@ -86,24 +88,25 @@ const AuthDrawer = ({ open, onClose }) => {
   }, [open]);
 
   const handleCheckUser = async (data) => {
-    try {
-      setLoadingCheck(true);
-      const res = await fetch(
-        `http://localhost:8084/auth-app/check-user?email=${data.email}`
-      );
-      const result = await res.json();
-      console.log("Check User Response:", result);
-      setUserCheckResult(result);
-      setLoadingCheck(false);
+  try {
+    setLoadingCheck(true);
 
-      if (!result.exists) setMode("signup");
-      else if (result.isGoogleUser) setMode("googleLogin");
-      else setMode("login");
-    } catch (err) {
-      console.error("Error checking user:", err);
-      setLoadingCheck(false);
-    }
-  };
+    const result = await triggerCheckUser(data.email).unwrap();
+
+    console.log("Check User Response:", result);
+    setUserCheckResult(result);
+
+    if (!result.exists) setMode("signup");
+    else if (result.isGoogleUser) setMode("googleLogin");
+    else setMode("login");
+
+  } catch (err) {
+    console.error("Check user error:", err);
+  } finally {
+    setLoadingCheck(false);
+  }
+};
+
 
   const handleLogin = async (data) => {
     try {

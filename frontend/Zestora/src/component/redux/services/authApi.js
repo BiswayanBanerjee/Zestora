@@ -72,11 +72,11 @@ export const authApi = createApi({
       }),
     }),
     checkUser: builder.query({
-  query: (email) => ({
-    url: `/auth-app/check-user?email=${email}`,
-    method: "GET",
-  }),
-}),
+      query: (email) => ({
+        url: `/check-user?email=${email}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -88,4 +88,5 @@ export const {
   useLogoutMutation,
   useGoogleLoginMutation,
   useCheckUserQuery,
+  useLazyCheckUserQuery,  
 } = authApi;
