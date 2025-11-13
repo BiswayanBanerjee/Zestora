@@ -24,7 +24,7 @@ COPY --from=builder /app/target/*.jar app.jar
 COPY src/main/resources/aiven-truststore.jks /app/aiven-truststore.jks
 
 # Copy Firebase JSON (important!)
-COPY src/main/resources/zestora-dc0ed-firebase-adminsdk-fbsvc-8cd225cfc3.json /app/zestora-firebase.json
+# COPY src/main/resources/zestora-dc0ed-firebase-adminsdk-fbsvc-8cd225cfc3.json /app/zestora-firebase.json
 
 EXPOSE ${PORT}
 
