@@ -70,12 +70,11 @@ const AuthDrawer = ({ open, onClose }) => {
     reset: resetEmailForm,
   } = useForm({ mode: "onChange", reValidateMode: "onBlur" });
   const {
-  register: registerLogin,
-  handleSubmit: handleLoginSubmit,
-  formState: { errors: loginErrors },
-  reset: resetLoginForm,
-} = useForm({ mode: "onChange", reValidateMode: "onBlur" });
-
+    register: registerLogin,
+    handleSubmit: handleLoginSubmit,
+    formState: { errors: loginErrors },
+    reset: resetLoginForm,
+  } = useForm({ mode: "onChange", reValidateMode: "onBlur" });
 
   // ✅ After all your useState and useForm hooks
   useEffect(() => {
@@ -88,25 +87,23 @@ const AuthDrawer = ({ open, onClose }) => {
   }, [open]);
 
   const handleCheckUser = async (data) => {
-  try {
-    setLoadingCheck(true);
+    try {
+      setLoadingCheck(true);
 
-    const result = await triggerCheckUser(data.email).unwrap();
+      const result = await triggerCheckUser(data.email).unwrap();
 
-    console.log("Check User Response:", result);
-    setUserCheckResult(result);
+      console.log("Check User Response:", result);
+      setUserCheckResult(result);
 
-    if (!result.exists) setMode("signup");
-    else if (result.isGoogleUser) setMode("googleLogin");
-    else setMode("login");
-
-  } catch (err) {
-    console.error("Check user error:", err);
-  } finally {
-    setLoadingCheck(false);
-  }
-};
-
+      if (!result.exists) setMode("signup");
+      else if (result.isGoogleUser) setMode("googleLogin");
+      else setMode("login");
+    } catch (err) {
+      console.error("Check user error:", err);
+    } finally {
+      setLoadingCheck(false);
+    }
+  };
 
   const handleLogin = async (data) => {
     try {
@@ -298,23 +295,23 @@ const AuthDrawer = ({ open, onClose }) => {
         Sign In
       </Typography> */}
       <TextField
-  label="Email"
-  fullWidth
-  margin="normal"
-  {...registerLogin("email", { required: "Email is required" })}
-  error={!!loginErrors.email}
-  helperText={loginErrors.email?.message}
-/>
+        label="Email"
+        fullWidth
+        margin="normal"
+        {...registerLogin("email", { required: "Email is required" })}
+        error={!!loginErrors.email}
+        helperText={loginErrors.email?.message}
+      />
 
-<TextField
-  label="Password"
-  type="password"
-  fullWidth
-  margin="normal"
-  {...registerLogin("password", { required: "Password is required" })}
-  error={!!loginErrors.password}
-  helperText={loginErrors.password?.message}
-/>
+      <TextField
+        label="Password"
+        type="password"
+        fullWidth
+        margin="normal"
+        {...registerLogin("password", { required: "Password is required" })}
+        error={!!loginErrors.password}
+        helperText={loginErrors.password?.message}
+      />
 
       {error && <Typography className={styles.error}>{error}</Typography>}
       <Button
