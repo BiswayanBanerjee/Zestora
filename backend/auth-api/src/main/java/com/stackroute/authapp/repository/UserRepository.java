@@ -1,14 +1,23 @@
 package com.stackroute.authapp.repository;
 
-
 import com.stackroute.authapp.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
     // Find a user by email and password for authentication
-    public abstract User findByEmailAndPassword(String email, String password);
+    User findByEmailAndPassword(String email, String password);
 
-    // Optionally, you can add a method to find by email only
-    public abstract User findByEmail(String email);
+    // Better and safer: return Optional for null safety
+    Optional<User> findByEmail(String email);
+
+    @Modifying
+    @Transactional
+    @Query(value = "TRUNCATE TABLE user", nativeQuery = true)
+    void truncateUserTable();
+
 }

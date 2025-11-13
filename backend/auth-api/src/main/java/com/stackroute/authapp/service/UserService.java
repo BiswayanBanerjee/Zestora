@@ -9,4 +9,7 @@ public interface UserService {
     void saveUser(User user);
     void sendOtp(String email); // Add this method for OTP resend
     User loginCheck(String email, String password);
+    User findByEmail(String email);
+    User getUserByEmailFromDB(String email);
+    void truncateUsers();
 }

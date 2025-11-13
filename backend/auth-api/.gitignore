@@ -33,6 +33,7 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
+src/main/resources/zestora-dc0ed-firebase-adminsdk-fbsvc-8cd225cfc3.json
 
 ### VS Code ###
 .vscode/

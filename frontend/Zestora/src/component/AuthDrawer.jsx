@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Drawer,
   Box,
@@ -9,6 +9,8 @@ import {
   Divider,
   FormControlLabel,
   Checkbox,
+  InputAdornment,
+  Modal,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useForm } from "react-hook-form";
@@ -16,11 +18,18 @@ import {
   useLoginMutation,
   useSignupMutation,
   useVerifyOtpMutation,
+  useGoogleLoginMutation,
 } from "./redux/services/authApi";
 import { useAddCustomerMutation } from "./redux/services/customerApi";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "./redux/slices/authSlice";
 import styles from "./AuthDrawer.module.css";
+import { auth, provider } from "./firebaseConfig";
+import { signInWithPopup } from "firebase/auth";
+import { useGetCustomerByIdQuery } from "./redux/services/customerApi";
+import { customerApi } from "./redux/services/customerApi";
+
+import { store } from "./redux/store";
 
 const AuthDrawer = ({ open, onClose }) => {
   const dispatch = useDispatch();
@@ -29,122 +38,281 @@ const AuthDrawer = ({ open, onClose }) => {
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
   const [userData, setUserData] = useState(null);
-
   const [login, { isLoading: loginLoading }] = useLoginMutation();
   const [signup, { isLoading: signupLoading }] = useSignupMutation();
-  const [verifyOtp] = useVerifyOtpMutation();
+  const [verifyEmailOtp] = useVerifyOtpMutation();
   const [addCustomer] = useAddCustomerMutation();
+  const [googleLogin] = useGoogleLoginMutation();
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [googleUserData, setGoogleUserData] = useState(null);
+  const [userCheckResult, setUserCheckResult] = useState(null);
+  const [loadingCheck, setLoadingCheck] = useState(false);
 
   const {
     register,
     handleSubmit,
+    trigger,
     formState: { errors },
-  } = useForm();
+    reset,
+  } = useForm({ mode: "onChange", reValidateMode: "onBlur" });
+  const {
+    register: registerSignup,
+    handleSubmit: handleSignupSubmit,
+    formState: { errors: signupErrors },
+    reset: resetSignup,
+  } = useForm({ mode: "onChange", reValidateMode: "onBlur" });
+  const {
+    register: registerEmailCheck,
+    handleSubmit: handleEmailSubmit,
+    formState: { errors: emailErrors },
+    reset: resetEmailForm,
+  } = useForm({ mode: "onChange", reValidateMode: "onBlur" });
+  const {
+  register: registerLogin,
+  handleSubmit: handleLoginSubmit,
+  formState: { errors: loginErrors },
+  reset: resetLoginForm,
+} = useForm({ mode: "onChange", reValidateMode: "onBlur" });
+
+
+  // ✅ After all your useState and useForm hooks
+  useEffect(() => {
+    if (!open) {
+      resetEmailForm();
+      setUserCheckResult(null);
+      setMode(null);
+      setEmail("");
+    }
+  }, [open]);
+
+  const handleCheckUser = async (data) => {
+    try {
+      setLoadingCheck(true);
+      const res = await fetch(
+        `http://localhost:8084/auth-app/check-user?email=${data.email}`
+      );
+      const result = await res.json();
+      console.log("Check User Response:", result);
+      setUserCheckResult(result);
+      setLoadingCheck(false);
+
+      if (!result.exists) setMode("signup");
+      else if (result.isGoogleUser) setMode("googleLogin");
+      else setMode("login");
+    } catch (err) {
+      console.error("Error checking user:", err);
+      setLoadingCheck(false);
+    }
+  };
 
   const handleLogin = async (data) => {
     try {
       const result = await login(data).unwrap();
+
       if (result.token) {
-        dispatch(setCredentials(result.token));
+        // ✅ Save both token and user (for instant re-render)
+        dispatch(setCredentials({ token: result.token, user: result.user }));
         localStorage.setItem("token", result.token);
+        localStorage.setItem("user", JSON.stringify(result.user));
         onClose();
-      } else setError("Invalid credentials");
-    } catch {
+      } else {
+        setError("Invalid credentials");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
       setError("Login failed. Please try again.");
     }
   };
 
   const handleSignup = async (data) => {
-  try {
-    setError("");
-    const role = data.isOwner ? "OWNER" : "CUSTOMER";
-    const payload = { ...data, role };
+    try {
+      setError("");
+      const role = data.isOwner ? "OWNER" : "CUSTOMER";
+      const [firstName, ...lastNameParts] = data.fullName.trim().split(" ");
+      const lastName = lastNameParts.join(" ") || "";
 
-    const rawResponse = await signup(payload);
+      const payload = {
+        firstName,
+        lastName,
+        email: data.email,
+        phone: `+91${data.mobile}`,
+        password: data.password,
+        role,
+      };
 
-    // RTK Query wraps errors — check .error or .data manually
-    let message = "";
-    if (rawResponse?.data) message = rawResponse.data;
-    else if (rawResponse?.error?.data) message = rawResponse.error.data;
-    else if (rawResponse?.error?.originalStatus === 200)
-      message = "OTP sent to email for verification";
+      const rawResponse = await signup(payload);
 
-    console.log("Signup response:", rawResponse);
+      let message = "";
+      if (rawResponse?.data) message = rawResponse.data;
+      else if (rawResponse?.error?.data) message = rawResponse.error.data;
+      else if (rawResponse?.error?.originalStatus === 200)
+        message = "OTP sent to email for verification";
 
-    if (
-      typeof message === "string" &&
-      message.toLowerCase().includes("otp sent")
-    ) {
-      setUserData(payload);
-      setEmail(payload.email);
-      setMode("verify");
-    } else {
+      console.log("Signup response:", rawResponse);
+
+      if (
+        typeof message === "string" &&
+        message.toLowerCase().includes("otp sent")
+      ) {
+        setUserData(payload);
+        setEmail(payload.email);
+        setMode("verify");
+        reset();
+      } else {
+        setError("Signup failed. Please try again.");
+      }
+    } catch (err) {
+      console.error("Signup error:", err);
       setError("Signup failed. Please try again.");
     }
-  } catch (err) {
-    console.error("Signup error:", err);
-    setError("Signup failed. Please try again.");
-  }
-};
+  };
 
+  const handleVerifyEmailOtp = async () => {
+    try {
+      setError("");
 
-  const handleVerifyOtp = async () => {
-  try {
-    setError("");
+      // Call verifyOtp API
+      const rawResponse = await verifyEmailOtp({ email, otp });
 
-    // Call verifyOtp API
-    const rawResponse = await verifyOtp({ email, otp });
+      // RTK Query may wrap responses differently depending on content type
+      let message = "";
+      if (rawResponse?.data) message = rawResponse.data;
+      else if (rawResponse?.error?.data) message = rawResponse.error.data;
+      else if (rawResponse?.error?.originalStatus === 200)
+        message = "OTP verified successfully.";
 
-    // RTK Query may wrap responses differently depending on content type
-    let message = "";
-    if (rawResponse?.data) message = rawResponse.data;
-    else if (rawResponse?.error?.data) message = rawResponse.error.data;
-    else if (rawResponse?.error?.originalStatus === 200)
-      message = "OTP verified successfully.";
+      console.log("Verify OTP response:", rawResponse);
 
-    console.log("Verify OTP response:", rawResponse);
-
-    // Accept plain text success message like in handleSignup
-    if (
-      typeof message === "string" &&
-      message.toLowerCase().includes("otp verified")
-    ) {
-      if (userData) {
-        await addCustomer(userData).unwrap();
+      // Accept plain text success message like in handleSignup
+      if (
+        typeof message === "string" &&
+        message.toLowerCase().includes("otp verified")
+      ) {
+        if (userData) {
+          await addCustomer(userData).unwrap();
+        }
+        setMode("login");
+      } else {
+        setError("OTP verification failed. Please try again.");
       }
-      setMode("login");
-    } else {
+    } catch (err) {
+      console.error("Verify OTP error:", err);
       setError("OTP verification failed. Please try again.");
     }
-  } catch (err) {
-    console.error("Verify OTP error:", err);
-    setError("OTP verification failed. Please try again.");
-  }
-};
+  };
 
+  const handleGoogleAuth = useCallback(async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+
+      // Split Google displayName into first and last name
+      const [firstName, ...lastNameParts] = (user.displayName || "")
+        .trim()
+        .split(" ");
+      const lastName = lastNameParts.join(" ") || "";
+
+      // Send token + first/last name to backend (auth-api)
+      const data = await googleLogin({
+        token: idToken,
+        firstName,
+        lastName,
+        email: user.email,
+      }).unwrap();
+
+      // ✅ Fetch customer data to check if phone exists
+      const { data: existingCustomer } = await store.dispatch(
+        customerApi.endpoints.getCustomerById.initiate(data.user.email)
+      );
+
+      if (!existingCustomer?.phone || existingCustomer.phone === "+91") {
+        // No phone — show modal
+        setGoogleUserData({ ...data });
+        setShowPhoneModal(true);
+      } else {
+        // Already has phone — proceed normally
+        dispatch(setCredentials({ token: data.jwt, user: data.user }));
+        localStorage.setItem("token", data.jwt);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        onClose();
+      }
+
+      const { jwt, user: backendUser } = data;
+
+      // ✅ Only show modal for new Google users (first-time sign-in)
+      if (!existingCustomer) {
+        setGoogleUserData({
+          jwt,
+          user: backendUser,
+          firstName,
+          lastName,
+        });
+        setShowPhoneModal(true);
+      }
+    } catch (error) {
+      console.error("Google Sign-In Error:", error);
+      setError("Google Sign-In failed. Please try again.");
+    }
+  }, []);
+
+  const handlePhoneSubmit = async (phoneNumber) => {
+    try {
+      // ✅ Add/update customer in customer-api
+      await addCustomer({
+        firstName: googleUserData.firstName,
+        lastName: googleUserData.lastName,
+        email: googleUserData.user.email,
+        phone: `+91${phoneNumber}`,
+        password: "GOOGLE_USER",
+        role: googleUserData.user.role,
+      }).unwrap();
+
+      // ✅ Save credentials locally
+      dispatch(
+        setCredentials({
+          token: googleUserData.jwt,
+          user: { ...googleUserData.user, phone: `+91${phoneNumber}` },
+        })
+      );
+      localStorage.setItem("token", googleUserData.jwt);
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...googleUserData.user, phone: `+91${phoneNumber}` })
+      );
+
+      setShowPhoneModal(false);
+      onClose();
+    } catch (err) {
+      console.error("Error saving phone:", err);
+      alert("Failed to save phone number. Try again.");
+    }
+  };
 
   const renderLogin = () => (
-    <form className={styles.form} onSubmit={handleSubmit(handleLogin)}>
-      <Typography variant="h5" className={styles.heading}>
-        Welcome Back 👋
-      </Typography>
+    <form className={styles.form} onSubmit={handleLoginSubmit(handleLogin)}>
+      {/* <Typography variant="h5" className={styles.heading}>
+        Sign In
+      </Typography> */}
       <TextField
-        label="Email"
-        fullWidth
-        margin="normal"
-        {...register("email", { required: "Email is required" })}
-        error={!!errors.email}
-        helperText={errors.email?.message}
-      />
-      <TextField
-        label="Password"
-        type="password"
-        fullWidth
-        margin="normal"
-        {...register("password", { required: "Password is required" })}
-        error={!!errors.password}
-        helperText={errors.password?.message}
-      />
+  label="Email"
+  fullWidth
+  margin="normal"
+  {...registerLogin("email", { required: "Email is required" })}
+  error={!!loginErrors.email}
+  helperText={loginErrors.email?.message}
+/>
+
+<TextField
+  label="Password"
+  type="password"
+  fullWidth
+  margin="normal"
+  {...registerLogin("password", { required: "Password is required" })}
+  error={!!loginErrors.password}
+  helperText={loginErrors.password?.message}
+/>
+
       {error && <Typography className={styles.error}>{error}</Typography>}
       <Button
         type="submit"
@@ -155,7 +323,7 @@ const AuthDrawer = ({ open, onClose }) => {
       >
         {loginLoading ? "Logging in..." : "Login"}
       </Button>
-      <Button
+      {/* <Button
         variant="outlined"
         fullWidth
         className={styles.secondaryBtn}
@@ -163,52 +331,105 @@ const AuthDrawer = ({ open, onClose }) => {
       >
         New User? Sign Up
       </Button>
+      <Typography align="center" sx={{ mt: 2, mb: 1 }}>
+        — or —
+      </Typography> */}
+
+      {/* <Button
+        variant="outlined"
+        fullWidth
+        startIcon={
+          <img
+            src="https://www.svgrepo.com/show/355037/google.svg"
+            alt="Google"
+            width={20}
+          />
+        }
+        onClick={handleGoogleAuth}
+      >
+        Continue with Google
+      </Button> */}
     </form>
   );
 
   const renderSignup = () => (
-    <form className={styles.form} onSubmit={handleSubmit(handleSignup)}>
-      <Typography variant="h5" className={styles.heading}>
+    <form className={styles.form} onSubmit={handleSignupSubmit(handleSignup)}>
+      {/* <Typography variant="h5" className={styles.heading}>
         Create Account ✨
-      </Typography>
+      </Typography> */}
+
+      {/* Full Name */}
       <TextField
-        label="First Name"
+        label="Full Name"
         fullWidth
         margin="normal"
-        {...register("firstName", { required: "First Name is required" })}
-        error={!!errors.firstName}
-        helperText={errors.firstName?.message}
+        {...registerSignup("fullName", {
+          required: "Full Name is required",
+          pattern: {
+            value: /^[A-Za-z]+(\s[A-Za-z]+)+$/,
+            message:
+              "Please enter your full name with a space (e.g., John Doe)",
+          },
+        })}
+        error={!!errors.fullName}
+        helperText={errors.fullName?.message}
       />
-      <TextField
-        label="Last Name"
-        fullWidth
-        margin="normal"
-        {...register("lastName", { required: "Last Name is required" })}
-        error={!!errors.lastName}
-        helperText={errors.lastName?.message}
-      />
+
+      {/* Email */}
       <TextField
         label="Email"
         fullWidth
         margin="normal"
-        {...register("email", { required: "Email is required" })}
+        {...registerSignup("email", {
+          required: "Email is required",
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Enter a valid email address",
+          },
+        })}
         error={!!errors.email}
         helperText={errors.email?.message}
       />
+
+      {/* Mobile Number */}
+      <TextField
+        label="Mobile Number"
+        fullWidth
+        variant="outlined"
+        margin="normal"
+        InputProps={{
+          startAdornment: <InputAdornment position="start">+91</InputAdornment>,
+        }}
+        {...registerSignup("mobile", {
+          required: "Mobile number is required",
+          pattern: {
+            value: /^[0-9]{10}$/,
+            message: "Enter a valid 10-digit mobile number",
+          },
+        })}
+        error={!!errors.mobile}
+        helperText={errors.mobile?.message}
+      />
+
+      {/* Password */}
       <TextField
         label="Password"
         type="password"
         fullWidth
         margin="normal"
-        {...register("password", { required: "Password is required" })}
+        {...registerSignup("password", { required: "Password is required" })}
         error={!!errors.password}
         helperText={errors.password?.message}
       />
+
+      {/* Owner checkbox */}
       <FormControlLabel
-        control={<Checkbox {...register("isOwner")} />}
+        control={<Checkbox {...registerSignup("isOwner")} />}
         label="Register as restaurant owner?"
       />
+
       {error && <Typography className={styles.error}>{error}</Typography>}
+
       <Button
         type="submit"
         variant="contained"
@@ -218,13 +439,30 @@ const AuthDrawer = ({ open, onClose }) => {
       >
         {signupLoading ? "Signing up..." : "Sign Up"}
       </Button>
-      <Button
+
+      {/* <Button
         variant="outlined"
         fullWidth
         className={styles.secondaryBtn}
         onClick={() => setMode("login")}
       >
         Already have an account? Login
+      </Button> */}
+      <Divider className={styles.divider} />
+
+      <Button
+        variant="outlined"
+        fullWidth
+        startIcon={
+          <img
+            src="https://www.svgrepo.com/show/355037/google.svg"
+            alt="Google"
+            width={20}
+          />
+        }
+        onClick={handleGoogleAuth}
+      >
+        Continue with Google
       </Button>
     </form>
   );
@@ -247,7 +485,7 @@ const AuthDrawer = ({ open, onClose }) => {
         variant="contained"
         fullWidth
         className={styles.primaryBtn}
-        onClick={handleVerifyOtp}
+        onClick={handleVerifyEmailOtp}
       >
         Verify OTP
       </Button>
@@ -262,6 +500,12 @@ const AuthDrawer = ({ open, onClose }) => {
     </Box>
   );
 
+  useEffect(() => {
+    if (mode === "googleLogin") {
+      handleGoogleAuth();
+    }
+  }, [mode, handleGoogleAuth]);
+
   return (
     <Drawer
       anchor="right"
@@ -272,23 +516,134 @@ const AuthDrawer = ({ open, onClose }) => {
       }}
     >
       <Box className={styles.header}>
-        <Typography variant="h6" className={styles.title}>
+        <Typography variant="h4" className={styles.heading}>
           {mode === "login"
             ? "Sign In"
             : mode === "signup"
-            ? "Sign Up"
-            : "Verify OTP"}
+            ? "Create Account"
+            : "Sign In"}
         </Typography>
         <IconButton onClick={onClose}>
           <CloseIcon />
         </IconButton>
       </Box>
       <Divider className={styles.divider} />
-      {mode === "login"
-        ? renderLogin()
-        : mode === "signup"
-        ? renderSignup()
-        : renderOtp()}
+      {/* Step 1: Ask for email before deciding login/signup/google */}
+      {!userCheckResult ? (
+        <form
+          onSubmit={handleEmailSubmit(handleCheckUser)}
+          className={styles.form}
+        >
+          {/* <Typography variant="h5" className={styles.heading}>
+            Sign In or Sign Up
+          </Typography> */}
+
+          <TextField
+            label="Email Address"
+            fullWidth
+            margin="normal"
+            {...registerEmailCheck("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Enter a valid email address",
+              },
+            })}
+            error={!!emailErrors.email}
+            helperText={emailErrors.email?.message}
+          />
+
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            className={styles.primaryBtn}
+            disabled={loadingCheck}
+          >
+            {loadingCheck ? "Checking..." : "Login"}
+          </Button>
+        </form>
+      ) : (
+        <>
+          {mode === "login"
+            ? renderLogin()
+            : mode === "signup"
+            ? renderSignup()
+            : mode === "googleLogin"
+            ? // <Button
+              //   variant="outlined"
+              //   fullWidth
+              //   startIcon={
+              //     <img
+              //       src="https://www.svgrepo.com/show/355037/google.svg"
+              //       alt="Google"
+              //       width={20}
+              //     />
+              //   }
+              //   style={{marginTop:"15px"}}
+              //   onClick={handleGoogleAuth}
+              // >
+              //   Continue with Google
+              // </Button>
+              null
+            : renderOtp()}
+        </>
+      )}
+
+      <Modal
+        open={showPhoneModal}
+        onClose={(event, reason) => {
+          // ❌ Prevent closing on backdrop click or ESC
+          if (reason === "backdropClick" || reason === "escapeKeyDown") return;
+        }}
+        disableEscapeKeyDown
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 3,
+            width: 320,
+            textAlign: "center",
+          }}
+          onClick={(e) => e.stopPropagation()} // Prevent accidental backdrop close
+        >
+          <form
+            onSubmit={handleSubmit((data) =>
+              handlePhoneSubmit(data.phoneNumber)
+            )}
+          >
+            <TextField
+              label="Mobile Number"
+              fullWidth
+              margin="normal"
+              {...register("phoneNumber", {
+                required: "Mobile number is required",
+                pattern: {
+                  value: /^[0-9]{10}$/,
+                  message: "Enter a valid 10-digit mobile number",
+                },
+              })}
+              error={!!errors.phoneNumber}
+              helperText={errors.phoneNumber?.message}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">+91</InputAdornment>
+                ),
+              }}
+            />
+
+            <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
+              Save & Continue
+            </Button>
+          </form>
+        </Box>
+      </Modal>
     </Drawer>
   );
 };

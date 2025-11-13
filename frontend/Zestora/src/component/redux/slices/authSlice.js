@@ -22,14 +22,21 @@ const authSlice = createSlice({
   },
   reducers: {
     setCredentials: (state, action) => {
-      const token = action.payload;
+      const { token, user } = action.payload;
       state.token = token;
-      try {
-        const decoded = jwtDecode(token);
-        state.user = { email: decoded.sub, role: decoded.role };
-      } catch (e) {
-        console.error("Error decoding token", e);
-        state.user = null;
+
+      if (user) {
+        // use the provided user (from backend)
+        state.user = user;
+      } else {
+        // fallback: decode manually if no user object was passed
+        try {
+          const decoded = jwtDecode(token);
+          state.user = { email: decoded.sub, role: decoded.role };
+        } catch (e) {
+          console.error("Error decoding token", e);
+          state.user = null;
+        }
       }
     },
     clearCredentials: (state) => {

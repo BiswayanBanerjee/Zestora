@@ -48,7 +48,9 @@ export const authApi = createApi({
     }),
     verifyOtp: builder.mutation({
       query: ({ email, otp }) => ({
-        url: `/verify-otp?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`,
+        url: `/verify-otp?email=${encodeURIComponent(
+          email
+        )}&otp=${encodeURIComponent(otp)}`,
         method: "POST",
       }),
     }),
@@ -62,6 +64,19 @@ export const authApi = createApi({
         localStorage.removeItem("token");
       },
     }),
+    googleLogin: builder.mutation({
+      query: (payload) => ({
+        url: "/google-login",
+        method: "POST",
+        body: payload,
+      }),
+    }),
+    checkUser: builder.query({
+  query: (email) => ({
+    url: `/auth-app/check-user?email=${email}`,
+    method: "GET",
+  }),
+}),
   }),
 });
 
@@ -71,4 +86,6 @@ export const {
   useResendOtpMutation,
   useVerifyOtpMutation,
   useLogoutMutation,
+  useGoogleLoginMutation,
+  useCheckUserQuery,
 } = authApi;

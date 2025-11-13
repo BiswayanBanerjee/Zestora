@@ -5,6 +5,7 @@ import com.stackroute.authapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -86,11 +87,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User loginCheck(String email, String password) {
-        User user = userRepository.findByEmail(email);
-        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-            return user; // Return the user if password matches
-        }
-        return null; // Return null if login fails
+    public User getUserByEmailFromDB(String email) {
+        return userRepository.findByEmail(email).orElse(null);
     }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    @Override
+    public User loginCheck(String email, String password) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void truncateUsers() {
+        userRepository.truncateUserTable();
+    }
+
 }

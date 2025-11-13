@@ -94,22 +94,39 @@ const OrderForm = () => {
   });
   const { data: restaurants = [] } = useGetRestaurantsQuery();
 
+  const safeCartData = useMemo(
+    () => (Array.isArray(cartData) ? cartData : []),
+    [cartData]
+  );
+  const safeDishes = useMemo(
+    () => (Array.isArray(dishes) ? dishes : []),
+    [dishes]
+  );
+  const safeOrders = useMemo(
+    () => (Array.isArray(orders) ? orders : []),
+    [orders]
+  );
+  const safeRestaurants = useMemo(
+    () => (Array.isArray(restaurants) ? restaurants : []),
+    [restaurants]
+  );
+
   // Mutations
   const [updateCart] = useUpdateCartMutation();
   const [addOrder] = useAddOrderMutation();
 
   const dishLookup = useMemo(() => {
     const map = new Map();
-    if (Array.isArray(dishes)) {
-      for (const d of dishes) {
+    if (Array.isArray(safeDishes)) {
+      for (const d of safeDishes) {
         const id = d._id || d.id;
         if (id) map.set(id, { dish: d });
       }
     }
-    if (Array.isArray(restaurants)) {
-      for (const rest of restaurants) {
-        if (!Array.isArray(rest.dishes)) continue;
-        for (const dish of rest.dishes) {
+    if (Array.isArray(safeRestaurants)) {
+      for (const rest of safeRestaurants) {
+        if (!Array.isArray(rest.safeDishes)) continue;
+        for (const dish of rest.safeDishes) {
           const id = dish._id || dish.id;
           if (!id) continue;
           if (!map.has(id)) map.set(id, { dish, restaurant: rest });
@@ -121,7 +138,7 @@ const OrderForm = () => {
       }
     }
     return map;
-  }, [dishes, restaurants]);
+  }, [safeDishes, safeRestaurants]);
 
   // Prefill user data and addresses
   useEffect(() => {
@@ -136,9 +153,9 @@ const OrderForm = () => {
 
   // Build cart with dish details
   useEffect(() => {
-    if (cartData.length && dishes.length) {
+    if (safeCartData.length && safeDishes.length) {
       const itemCounts = {};
-      cartData.forEach((itemId) => {
+      safeCartData.forEach((itemId) => {
         itemCounts[itemId] = (itemCounts[itemId] || 0) + 1;
       });
 
@@ -167,7 +184,7 @@ const OrderForm = () => {
       setCartItems(cartItemsWithDetails);
       calculateTotalPrice(cartItemsWithDetails);
     }
-  }, [cartData, dishes, dishLookup]);
+  }, [safeCartData, safeDishes, dishLookup]);
 
   const calculateTotalPrice = (items) => {
     const total = items.reduce((acc, item) => {
@@ -220,7 +237,7 @@ const OrderForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      const newOrderId = (orders?.length || 0) + 1;
+      const newOrderId = (safeOrders?.length || 0) + 1;
       const newCustomerOrder = {
         orderId: newOrderId.toString(),
         customerEmail: customerId,
@@ -249,7 +266,8 @@ const OrderForm = () => {
   );
 
   useEffect(() => {
-    if (!addresses.length || !cartItems.length || !restaurants.length) return;
+    if (!addresses.length || !cartItems.length || !safeRestaurants.length)
+      return;
 
     const fetchDistances = async () => {
       const results = {}; // no distanceData dependency
@@ -257,7 +275,9 @@ const OrderForm = () => {
 
       const firstCartItem = cartItems[0];
       const restaurantName = firstCartItem?.restaurantName;
-      const restaurantData = restaurants.find((r) => r.name === restaurantName);
+      const restaurantData = safeRestaurants.find(
+        (r) => r.name === restaurantName
+      );
 
       if (!restaurantData?.location?.coordinates) return;
       const restCoords = restaurantData.location.coordinates;
@@ -291,7 +311,7 @@ const OrderForm = () => {
     };
 
     fetchDistances();
-  }, [addresses, cartItems, restaurants]);
+  }, [addresses, cartItems, safeRestaurants]);
 
   const formattedDistances = useMemo(() => {
     const result = {};
@@ -454,7 +474,7 @@ const OrderForm = () => {
                       : "Calculating..."}
                   </p>
                 </div>
-              ) : addresses.length > 0 ? (
+              ) : Array.isArray(addresses) && addresses.length > 0 ? (
                 <div>
                   <p className={styles.addressTitle}>
                     {addresses[0].label ||
@@ -495,7 +515,7 @@ const OrderForm = () => {
             className={styles.proceedBtn}
             type="submit"
             onClick={handleSubmit(onSubmit)}
-            disabled={cartItems.length === 0}
+            disabled={!Array.isArray(cartItems) || cartItems.length === 0}
           >
             PROCEED TO PAY
           </Button>
