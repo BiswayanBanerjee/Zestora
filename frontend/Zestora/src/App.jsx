@@ -22,24 +22,44 @@ const App = () => {
   const [isWarmingUp, setIsWarmingUp] = useState(true);
 
   useEffect(() => {
-    const wakeUpServices = async () => {
-      const urls = [
-        `${import.meta.env.VITE_AUTH_WAKE_URL}/wake`,
-        `${import.meta.env.VITE_CUSTOMER_WAKE_URL}/wake`,
-        `${import.meta.env.VITE_RESTAURANT_WAKE_URL}/wake`,
-      ];
+  const wakeUpServices = async () => {
+    const urls = [
+      `${import.meta.env.VITE_AUTH_WAKE_URL}/wake`,
+      `${import.meta.env.VITE_CUSTOMER_WAKE_URL}/wake`,
+      `${import.meta.env.VITE_RESTAURANT_WAKE_URL}/wake`,
+    ];
 
-      try {
-        await Promise.all(urls.map(url => fetch(url).catch(() => null)));
-      } catch (error) {
-        console.error('Wake-up failed:', error);
-      } finally {
-        setIsWarmingUp(false);
+    let allAwake = false;
+
+    while (!allAwake) {
+      // Send wake-up requests
+      const results = await Promise.all(
+        urls.map(async (url) => {
+          try {
+            const res = await fetch(url, { method: "GET" });
+            return res.ok; // true/false
+          } catch {
+            return false; // offline or failed
+          }
+        })
+      );
+
+      // Check if all 3 servers responded successfully
+      allAwake = results.every(r => r === true);
+
+      if (!allAwake) {
+        console.log("Some servers still sleeping… retrying in 1 seconds");
+        await new Promise(res => setTimeout(res, 1000)); // 1 sec delay
       }
-    };
+    }
 
-    wakeUpServices();
-  }, []);
+    console.log("All servers are awake");
+    setIsWarmingUp(false);
+  };
+
+  wakeUpServices();
+}, []);
+
 
   const { data: restaurants = [], error, isLoading } = useGetRestaurantsQuery();
   const [filteredDish, setFilteredDish] = useState([]);
