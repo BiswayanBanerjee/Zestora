@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, useParams, useLocation } from 'react-router-dom';
-import { Box, CircularProgress, Typography } from '@mui/material';
-import Navbar from './component/Navbar';
-import Header from './component/Header';
-import DishManager from './component/DishManager';
-import Footer from './component/Footer';
-import OrderForm from './component/OrderForm';
-import Login from './component/Login';
-import SignUp from './component/SignUp';
-import PrivateRoute from './component/PrivateRoute';
-import DishDetail from './component/DishDetail';
-import AccountDashboard from './component/AccountDashboard';
-import RestaurantView from './component/RestaurantView';
-import useAppTheme from './theme';
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import { useGetRestaurantsQuery } from './component/redux/services/restaurantApi';
+import React, { useState, useEffect } from "react";
+import { Routes, Route, useParams, useLocation } from "react-router-dom";
+import { Box, CircularProgress, Typography } from "@mui/material";
+import Navbar from "./component/Navbar";
+import Header from "./component/Header";
+import DishManager from "./component/DishManager";
+import Footer from "./component/Footer";
+import OrderForm from "./component/OrderForm";
+import Login from "./component/Login";
+import SignUp from "./component/SignUp";
+import PrivateRoute from "./component/PrivateRoute";
+import DishDetail from "./component/DishDetail";
+import AccountDashboard from "./component/AccountDashboard";
+import RestaurantView from "./component/RestaurantView";
+import useAppTheme from "./theme";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import { useGetRestaurantsQuery } from "./component/redux/services/restaurantApi";
 
 const App = () => {
   const { theme, setThemePreference } = useAppTheme();
@@ -22,42 +22,36 @@ const App = () => {
   const [isWarmingUp, setIsWarmingUp] = useState(true);
 
   useEffect(() => {
-  const wakeUpServices = async () => {
+    setIsWarmingUp(true); // loader shows immediately
+
     const urls = [
       `${import.meta.env.VITE_AUTH_WAKE_URL}/wake`,
       `${import.meta.env.VITE_CUSTOMER_WAKE_URL}/wake`,
       `${import.meta.env.VITE_RESTAURANT_WAKE_URL}/wake`,
     ];
 
-    let allAwake = false;
-
-    while (!allAwake) {
+    const interval = setInterval(async () => {
       const results = await Promise.all(
         urls.map(async (url) => {
           try {
-            const res = await fetch(url, { method: "GET" });
-            return res.ok; // success: 200
+            const res = await fetch(url);
+            return res.ok;
           } catch {
-            return false; // server still sleeping
+            return false;
           }
         })
       );
 
-      allAwake = results.every((ready) => ready);
+      const allAwake = results.every((r) => r === true);
 
-      if (!allAwake) {
-        // Wait only 0.5 seconds (fastest safe interval)
-        await new Promise((res) => setTimeout(res, 500));
+      if (allAwake) {
+        clearInterval(interval);
+        setIsWarmingUp(false); // stop loader
       }
-    }
+    }, 500); // retry every 500ms (safe + fast)
 
-    setIsWarmingUp(false);
-  };
-
-  wakeUpServices();
-}, []);
-
-
+    return () => clearInterval(interval);
+  }, []);
 
   const { data: restaurants = [], error, isLoading } = useGetRestaurantsQuery();
   const [filteredDish, setFilteredDish] = useState([]);
@@ -72,12 +66,12 @@ const App = () => {
     return (
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          textAlign: 'center',
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          textAlign: "center",
           bgcolor: theme.palette.background.default,
         }}
       >
@@ -93,7 +87,7 @@ const App = () => {
   if (error) return <div>Error loading data</div>;
 
   const handleFilterDish = (category) => {
-    if (category === 'ALL') {
+    if (category === "ALL") {
       setFilteredDish(restaurants);
     } else {
       const filteredRestaurants = restaurants
@@ -112,7 +106,7 @@ const App = () => {
   };
 
   const handleHeaderSearch = (searchTerm) => {
-    if (!searchTerm || searchTerm.toLowerCase() === 'all') {
+    if (!searchTerm || searchTerm.toLowerCase() === "all") {
       setFilteredDish(restaurants);
     } else {
       const filteredRestaurants = restaurants
@@ -142,19 +136,25 @@ const App = () => {
       <CssBaseline />
       <Box
         className="App"
-        sx={{ backgroundColor: theme.palette.background.default, minHeight: '100vh' }}
+        sx={{
+          backgroundColor: theme.palette.background.default,
+          minHeight: "100vh",
+        }}
       >
         <Header
           products={restaurants}
           onSearchDish={handleHeaderSearch}
           setThemePreference={setThemePreference}
         />
-        {location.pathname === '/' && (
+        {location.pathname === "/" && (
           <Navbar products={restaurants} onSearchDish={handleFilterDish} />
         )}
         <Routes>
           <Route path="/" element={<DishManager products={filteredDish} />} />
-          <Route path="/dish/:dishId" element={<DishDetail dish={restaurants} />} />
+          <Route
+            path="/dish/:dishId"
+            element={<DishDetail dish={restaurants} />}
+          />
           <Route
             path="/order"
             element={
@@ -185,16 +185,18 @@ const App = () => {
           <Route path="/restaurant/:id" element={<RestaurantView />} />
           <Route path="*" element={<div>404 - Page Not Found</div>} />
         </Routes>
-        {location.pathname === '/' && <Footer />}
+        {location.pathname === "/" && <Footer />}
       </Box>
     </ThemeProvider>
   );
 };
 
 const OrderSuccess = () => (
-  <Box sx={{ textAlign: 'center', p: 3 }}>
+  <Box sx={{ textAlign: "center", p: 3 }}>
     <h2>Order Placed Successfully!</h2>
-    <p>Thank you for your order. You will receive a confirmation email shortly.</p>
+    <p>
+      Thank you for your order. You will receive a confirmation email shortly.
+    </p>
   </Box>
 );
 
@@ -203,7 +205,7 @@ const OrderPage = ({ dish }) => {
   const selectedDish = dish.find((item) => item.id.toString() === dishId);
 
   if (!selectedDish) {
-    return <Box sx={{ textAlign: 'center', p: 3 }}>Dish not found</Box>;
+    return <Box sx={{ textAlign: "center", p: 3 }}>Dish not found</Box>;
   }
 
   return <OrderForm dish={selectedDish} />;
