@@ -32,33 +32,31 @@ const App = () => {
     let allAwake = false;
 
     while (!allAwake) {
-      // Send wake-up requests
       const results = await Promise.all(
         urls.map(async (url) => {
           try {
             const res = await fetch(url, { method: "GET" });
-            return res.ok; // true/false
+            return res.ok; // success: 200
           } catch {
-            return false; // offline or failed
+            return false; // server still sleeping
           }
         })
       );
 
-      // Check if all 3 servers responded successfully
-      allAwake = results.every(r => r === true);
+      allAwake = results.every((ready) => ready);
 
       if (!allAwake) {
-        console.log("Some servers still sleeping… retrying in 1 seconds");
-        await new Promise(res => setTimeout(res, 1000)); // 1 sec delay
+        // Wait only 0.5 seconds (fastest safe interval)
+        await new Promise((res) => setTimeout(res, 500));
       }
     }
 
-    console.log("All servers are awake");
     setIsWarmingUp(false);
   };
 
   wakeUpServices();
 }, []);
+
 
 
   const { data: restaurants = [], error, isLoading } = useGetRestaurantsQuery();
