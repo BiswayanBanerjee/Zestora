@@ -29,60 +29,57 @@ const App = () => {
   const [filteredDish, setFilteredDish] = useState([]);
 
   useEffect(() => {
-    setIsWarmingUp(true);
+  setIsWarmingUp(true);
 
-    const urls = {
-      auth: `${import.meta.env.VITE_AUTH_WAKE_URL}/wake`,
-      customer: `${import.meta.env.VITE_CUSTOMER_WAKE_URL}/wake`,
-      restaurant: `${import.meta.env.VITE_RESTAURANT_WAKE_URL}/wake`,
-    };
+  const urls = {
+    auth: `${import.meta.env.VITE_AUTH_WAKE_URL}/wake`,
+    customer: `${import.meta.env.VITE_CUSTOMER_WAKE_URL}/wake`,
+    restaurant: `${import.meta.env.VITE_RESTAURANT_WAKE_URL}/wake`,
+  };
 
-    let delay = 500; // start fast
-    const maxDelay = 8000; // max 8 sec between retries
-    const timeout = 60000; // 60 sec timeout
-    const start = Date.now();
+  let delay = 500;
+  const maxDelay = 8000;
+  const timeout = 60000;
+  const start = Date.now();
 
-    const checkWake = async () => {
-      // Timeout fallback
-      if (Date.now() - start > timeout) {
-        console.warn("⏳ Wake-up timeout after 60 seconds.");
-        setIsWarmingUp(false);
-        return;
-      }
+  const checkWake = async () => {
+    if (Date.now() - start > timeout) {
+      console.warn("⚠ Timeout: Some servers failed to wake.");
+      setIsWarmingUp(false);
+      return;
+    }
 
-      const newStatus = { ...serverStatus };
+    const newStatus = { ...serverStatus };
 
-      await Promise.all(
-        Object.keys(urls).map(async (key) => {
-          try {
-            const res = await fetch(urls[key]);
-            newStatus[key] = res.ok;
-          } catch {
-            newStatus[key] = false;
-          }
-        })
-      );
+    await Promise.all(
+      Object.keys(urls).map(async (key) => {
+        try {
+          const res = await fetch(urls[key]);
+          newStatus[key] = res.ok;
+        } catch {
+          newStatus[key] = false;
+        }
+      })
+    );
 
-      // Update UI
-      setServerStatus(newStatus);
-      console.log("Wake status:", newStatus);
+    setServerStatus(newStatus); // 🔥 UPDATE UI
+    console.log("Wake status:", newStatus);
 
-      const allAwake = Object.values(newStatus).every((s) => s === true);
+    const allAwake = Object.values(newStatus).every((r) => r === true);
 
-      if (allAwake) {
-        console.log("🎉 All servers are awake!");
-        setIsWarmingUp(false);
-        return;
-      }
+    if (allAwake) {
+      console.log("🎉 All servers awake!");
+      setIsWarmingUp(false);
+      return;
+    }
 
-      // Exponential backoff (slow down retries)
-      delay = Math.min(delay * 2, maxDelay);
+    delay = Math.min(delay * 2, maxDelay);
+    setTimeout(checkWake, delay);
+  };
 
-      setTimeout(checkWake, delay);
-    };
+  checkWake();
+}, []);
 
-    checkWake();
-  }, []);
 
   useEffect(() => {
     if (restaurants.length > 0) {
@@ -91,47 +88,43 @@ const App = () => {
   }, [restaurants]);
 
   if (isWarmingUp) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          textAlign: "center",
-          bgcolor: theme.palette.background.default,
-        }}
-      >
-        <CircularProgress />
-        <Typography variant="h6" sx={{ mt: 2 }}>
-          Warming up servers... please wait 20–40 seconds
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        textAlign: "center",
+        bgcolor: theme.palette.background.default,
+      }}
+    >
+      <CircularProgress />
+      <Typography variant="h6" sx={{ mt: 2 }}>
+        Warming up servers... please wait 20–40 seconds
+      </Typography>
+
+      <Box sx={{ mt: 3, textAlign: "left" }}>
+        <Typography><b>Server Status:</b></Typography>
+
+        <Typography color={serverStatus.auth ? "green" : "red"}>
+          {serverStatus.auth ? "✔ Auth Awake" : "⏳ Waking Auth..."}
         </Typography>
 
-        <Box sx={{ mt: 3, textAlign: "left" }}>
-          <Typography>
-            <b>Server Status:</b>
-          </Typography>
+        <Typography color={serverStatus.customer ? "green" : "red"}>
+          {serverStatus.customer ? "✔ Customer Awake" : "⏳ Waking Customer..."}
+        </Typography>
 
-          <Typography color={serverStatus.auth ? "green" : "red"}>
-            {serverStatus.auth ? "✔ Auth Awake" : "⏳ Waking Auth..."}
-          </Typography>
-
-          <Typography color={serverStatus.customer ? "green" : "red"}>
-            {serverStatus.customer
-              ? "✔ Customer Awake"
-              : "⏳ Waking Customer..."}
-          </Typography>
-
-          <Typography color={serverStatus.restaurant ? "green" : "red"}>
-            {serverStatus.restaurant
-              ? "✔ Restaurant Awake"
-              : "⏳ Waking Restaurant..."}
-          </Typography>
-        </Box>
+        <Typography color={serverStatus.restaurant ? "green" : "red"}>
+          {serverStatus.restaurant
+            ? "✔ Restaurant Awake"
+            : "⏳ Waking Restaurant..."}
+        </Typography>
       </Box>
-    );
-  }
+    </Box>
+  );
+}
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading data</div>;
