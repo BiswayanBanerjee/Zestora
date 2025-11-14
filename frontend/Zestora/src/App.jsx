@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Routes, Route, useParams, useLocation } from "react-router-dom";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import Navbar from "./component/Navbar";
@@ -6,8 +7,6 @@ import Header from "./component/Header";
 import DishManager from "./component/DishManager";
 import Footer from "./component/Footer";
 import OrderForm from "./component/OrderForm";
-import Login from "./component/Login";
-import SignUp from "./component/SignUp";
 import PrivateRoute from "./component/PrivateRoute";
 import DishDetail from "./component/DishDetail";
 import AccountDashboard from "./component/AccountDashboard";
@@ -15,6 +14,7 @@ import RestaurantView from "./component/RestaurantView";
 import useAppTheme from "./theme";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import { useGetRestaurantsQuery } from "./component/redux/services/restaurantApi";
+import AuthDrawer from "./component/AuthDrawer";
 
 const App = () => {
   const { theme, setThemePreference } = useAppTheme();
@@ -27,6 +27,8 @@ const App = () => {
   const [isWarmingUp, setIsWarmingUp] = useState(true);
   const { data: restaurants = [], error, isLoading } = useGetRestaurantsQuery();
   const [filteredDish, setFilteredDish] = useState([]);
+  const [authOpen, setAuthOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsWarmingUp(true);
@@ -86,6 +88,23 @@ const App = () => {
       setFilteredDish(restaurants);
     }
   }, [restaurants]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    const protectedRoutes = ["/profile", "/order", "/checkout"];
+
+    if (protectedRoutes.includes(location.pathname) && !token) {
+      setAuthOpen(true);
+
+      // If user typed the URL manually OR clicked a link:
+      if (location.key !== "default") {
+        navigate(-1); // go back to previous location
+      } else {
+        navigate("/"); // fallback if no history entry
+      }
+    }
+  }, [location.pathname]);
 
   if (isWarmingUp) {
     return (
@@ -193,6 +212,7 @@ const App = () => {
           onSearchDish={handleHeaderSearch}
           setThemePreference={setThemePreference}
         />
+        <AuthDrawer open={authOpen} onClose={() => setAuthOpen(false)} />
         {location.pathname === "/" && (
           <Navbar products={restaurants} onSearchDish={handleFilterDish} />
         )}
@@ -203,32 +223,17 @@ const App = () => {
             element={<DishDetail dish={restaurants} />}
           />
           <Route
-            path="/order"
-            element={
-              <PrivateRoute>
-                <OrderPage dish={restaurants} />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/checkout"
-            element={
-              <PrivateRoute>
-                <OrderForm dish={filteredDish} />
-              </PrivateRoute>
-            }
-          />
+            element={<PrivateRoute onRequireAuth={() => setAuthOpen(true)} />}
+          >
+            <Route path="/profile" element={<AccountDashboard />} />
+            <Route path="/order" element={<OrderPage dish={restaurants} />} />
+            <Route
+              path="/checkout"
+              element={<OrderForm dish={filteredDish} />}
+            />
+          </Route>
+
           <Route path="/order-success" element={<OrderSuccess />} />
-          <Route
-            path="/Profile"
-            element={
-              <PrivateRoute>
-                <AccountDashboard />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
           <Route path="/restaurant/:id" element={<RestaurantView />} />
           <Route path="*" element={<div>404 - Page Not Found</div>} />
         </Routes>

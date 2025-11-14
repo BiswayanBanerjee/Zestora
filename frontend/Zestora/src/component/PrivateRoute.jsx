@@ -1,9 +1,13 @@
-import { Navigate } from 'react-router-dom';
+import { Outlet } from "react-router-dom";
 
-// Check if the token exists in local storage
-const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem('token');
-  return token ? children : <Navigate to="/login" />;
+const PrivateRoute = () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return null; // Do not render protected components
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoute;
