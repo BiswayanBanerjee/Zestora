@@ -3,6 +3,13 @@ import { Box, Typography, Button, Modal } from "@mui/material";
 import DishCard from "./DishCard";
 import styles from "./DishListCard.module.css"; // ✅ CSS module import
 import { useTheme } from "@mui/material/styles";
+import {
+  useGetCartQuery,
+  useUpdateCartMutation,
+} from "./redux/services/customerApi";
+
+import { updateCartSuccess } from "./redux/slices/customerSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 const DishListCard = ({ dish }) => {
   const imageUrl = `/${dish.imageUrl}`;
@@ -12,6 +19,8 @@ const DishListCard = ({ dish }) => {
   const [displayText, setDisplayText] = useState("");
   const descRef = useRef(null);
   const { background } = useTheme().palette;
+  const user = useSelector((state) => state.customer.customer);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 600);
@@ -55,6 +64,33 @@ const DishListCard = ({ dish }) => {
     }
     setDisplayText(truncated);
   }, [dish.description, expanded, isMobile]);
+
+  const { data: cartResponse } = useGetCartQuery(user?.email);
+  const [updateCart] = useUpdateCartMutation();
+
+  const handleAddToCart = async () => {
+    if (!user) {
+      alert("Please login first");
+      return;
+    }
+
+    // Step 1: correct cart reading format
+    const existingCartItems = Array.isArray(cartResponse) ? cartResponse : [];
+
+    // Step 2: add ONE quantity
+    const updatedCartItems = [...existingCartItems, dish.id];
+
+    // Step 3: update backend using correct format
+    await updateCart({
+      id: user.email,
+      cart: updatedCartItems,
+    });
+
+    // Step 4: update Redux
+    dispatch(updateCartSuccess({ cartItems: updatedCartItems }));
+
+    console.log("Cart:", updatedCartItems);
+  };
 
   return (
     <>
@@ -113,7 +149,11 @@ const DishListCard = ({ dish }) => {
 
           {dish.available && (
             <>
-              <Button variant="contained" className={styles.addBtn}>
+              <Button
+                variant="contained"
+                onClick={handleAddToCart}
+                className={styles.addBtn}
+              >
                 ADD
               </Button>
               <Typography className={styles.customisable}>

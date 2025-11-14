@@ -115,12 +115,11 @@ const Header = ({ setThemePreference }) => {
 
   // ✅ Cart count from RTK Query
   // ✅ Cart count from RTK Query
-const { data: cartItems } = useGetCartQuery(user?.email, {
-  skip: !user?.email,
-  pollingInterval: 5000,
-});
-const cartCount = Array.isArray(cartItems) ? cartItems.length : 0;
-
+  const { data: cartItems } = useGetCartQuery(user?.email, {
+    skip: !user?.email,
+    pollingInterval: 5000,
+  });
+  const cartCount = Array.isArray(cartItems) ? cartItems.length : 0;
 
   // ✅ Sync customer data once user logs in
   useEffect(() => {
