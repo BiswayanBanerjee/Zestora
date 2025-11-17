@@ -15,16 +15,16 @@ import HomeIcon from "@mui/icons-material/Home";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { Add, Remove, Delete } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styles from "./OrderForm.module.css";
 import { useTheme } from "@mui/material/styles";
 import AddAddressDrawer from "./AddAddressDrawer";
+import { updateCartSuccess } from "./redux/slices/customerSlice";
 
 // RTK Query imports
 import {
   useGetCustomerByIdQuery,
-  useGetCartQuery,
   useUpdateCartMutation,
   useGetOrdersQuery,
   useAddOrderMutation,
@@ -67,9 +67,8 @@ const getAddressKey = (addr) =>
 const OrderForm = () => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-
   const { register, handleSubmit, setValue } = useForm();
-  const [cartItems, setCartItems] = useState([]);
+  const [cartElements, setCartElements] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [addresses, setAddresses] = useState([]);
@@ -78,16 +77,16 @@ const OrderForm = () => {
   const [showAddAddressDrawer, setShowAddAddressDrawer] = useState(false);
   const [distanceData, setDistanceData] = useState({});
   const [selectedAddress, setSelectedAddress] = useState(null);
-
   const customerId = user?.email;
+  const dispatch = useDispatch();
 
   // Queries
   const { data: customerData } = useGetCustomerByIdQuery(customerId, {
     skip: !customerId,
   });
-  const { data: cartData = [] } = useGetCartQuery(customerId, {
-    skip: !customerId,
-  });
+  const cartItems = useSelector(
+    (state) => state.customer.customerData?.cartItems || []
+  );
   const { data: dishes = [] } = useGetDishesQuery();
   const { data: orders = [] } = useGetOrdersQuery(customerId, {
     skip: !customerId,
@@ -95,8 +94,8 @@ const OrderForm = () => {
   const { data: restaurants = [] } = useGetRestaurantsQuery();
 
   const safeCartData = useMemo(
-    () => (Array.isArray(cartData) ? cartData : []),
-    [cartData]
+    () => (Array.isArray(cartItems) ? cartItems : []),
+    [cartItems]
   );
   const safeDishes = useMemo(
     () => (Array.isArray(dishes) ? dishes : []),
@@ -181,7 +180,7 @@ const OrderForm = () => {
         })
         .filter(Boolean);
 
-      setCartItems(cartItemsWithDetails);
+      setCartElements(cartItemsWithDetails);
       calculateTotalPrice(cartItemsWithDetails);
     }
   }, [safeCartData, safeDishes, dishLookup]);
@@ -209,19 +208,34 @@ const OrderForm = () => {
   };
 
   const increaseQuantity = (index) => {
-    const updatedCart = [...cartItems];
+    const updatedCart = [...cartElements];
     updatedCart[index].quantity += 1;
-    setCartItems(updatedCart);
+
+    setCartElements(updatedCart);
     calculateTotalPrice(updatedCart);
+
+    const flatList = updatedCart.flatMap((item) =>
+      Array(item.quantity).fill(String(item.id))
+    );
+
+    dispatch(updateCartSuccess({ cartItems: flatList })); // 🔥 FIX HERE
     syncCart(updatedCart);
   };
 
   const decreaseQuantity = (index) => {
-    const updatedCart = [...cartItems];
+    const updatedCart = [...cartElements];
+
     if (updatedCart[index].quantity > 1) {
       updatedCart[index].quantity -= 1;
-      setCartItems(updatedCart);
+
+      setCartElements(updatedCart);
       calculateTotalPrice(updatedCart);
+
+      const flatList = updatedCart.flatMap((item) =>
+        Array(item.quantity).fill(String(item.id))
+      );
+
+      dispatch(updateCartSuccess({ cartItems: flatList })); // 🔥 FIX HERE
       syncCart(updatedCart);
     } else {
       deleteItem(index);
@@ -229,9 +243,16 @@ const OrderForm = () => {
   };
 
   const deleteItem = (index) => {
-    const updatedCart = cartItems.filter((_, i) => i !== index);
-    setCartItems(updatedCart);
+    const updatedCart = cartElements.filter((_, i) => i !== index);
+
+    setCartElements(updatedCart);
     calculateTotalPrice(updatedCart);
+
+    const flatList = updatedCart.flatMap((item) =>
+      Array(item.quantity).fill(String(item.id))
+    );
+
+    dispatch(updateCartSuccess({ cartItems: flatList })); // 🔥 FIX HERE
     syncCart(updatedCart);
   };
 
@@ -241,13 +262,13 @@ const OrderForm = () => {
       const newCustomerOrder = {
         orderId: newOrderId.toString(),
         customerEmail: customerId,
-        dishIds: cartItems.map((item) => item.id),
+        dishIds: cartElements.map((item) => item.id),
         totalAmount: totalPrice,
         deliveryAddress: data.deliveryAddress || "Saved Address",
         status: "orderAccepted",
         orderDate: new Date().toISOString(),
         deliveryInstruction: data.description || "",
-        customerOrders: cartItems.reduce((acc, item) => {
+        customerOrders: cartElements.reduce((acc, item) => {
           acc[item.id] = item.quantity;
           return acc;
         }, {}),
@@ -255,7 +276,13 @@ const OrderForm = () => {
 
       await addOrder({ id: customerId, order: newCustomerOrder }).unwrap();
 
-      setCartItems([]);
+      setCartElements([]);
+      // 1️⃣ Clear Redux cart
+      dispatch(updateCartSuccess({ cartItems: [] }));
+
+      // 2️⃣ Clear backend cart
+      await updateCart({ id: customerId, cart: [] });
+
       navigate("/order-success");
     } catch (error) {
       console.error("Order submission failed", error);
@@ -266,14 +293,14 @@ const OrderForm = () => {
   );
 
   useEffect(() => {
-    if (!addresses.length || !cartItems.length || !safeRestaurants.length)
+    if (!addresses.length || !cartElements.length || !safeRestaurants.length)
       return;
 
     const fetchDistances = async () => {
       const results = {}; // no distanceData dependency
       const cachedData = distanceCacheRef.current;
 
-      const firstCartItem = cartItems[0];
+      const firstCartItem = cartElements[0];
       const restaurantName = firstCartItem?.restaurantName;
       const restaurantData = safeRestaurants.find(
         (r) => r.name === restaurantName
@@ -311,7 +338,7 @@ const OrderForm = () => {
     };
 
     fetchDistances();
-  }, [addresses, cartItems, safeRestaurants]);
+  }, [addresses, cartElements, safeRestaurants]);
 
   const formattedDistances = useMemo(() => {
     const result = {};
@@ -515,7 +542,7 @@ const OrderForm = () => {
             className={styles.proceedBtn}
             type="submit"
             onClick={handleSubmit(onSubmit)}
-            disabled={!Array.isArray(cartItems) || cartItems.length === 0}
+            disabled={!Array.isArray(cartElements) || cartElements.length === 0}
           >
             PROCEED TO PAY
           </Button>
@@ -534,9 +561,9 @@ const OrderForm = () => {
           <h3>{user?.firstName || "Your"}'s Cart</h3>
         </div> */}
 
-        {cartItems.length > 0 ? (
+        {cartElements.length > 0 ? (
           <>
-            {cartItems.map((item, index) => {
+            {cartElements.map((item, index) => {
               const itemTotal = (item.price - item.discount) * item.quantity;
               return (
                 <div key={item.id} className={styles.cartCard}>

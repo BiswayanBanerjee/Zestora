@@ -1,4 +1,4 @@
-import React, { useState, useContext, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -15,8 +15,6 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import Spa from "@mui/icons-material/Spa";
-import Egg from "@mui/icons-material/Egg";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
@@ -24,6 +22,9 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import { useUpdateDishMutation } from "./redux/services/restaurantApi"; // ✅ RTK Query
 import styles from "./DishCard.module.css"; // ✅ CSS module import
+import { useSelector, useDispatch } from "react-redux";
+import { updateCartSuccess } from "./redux/slices/customerSlice";
+import { useUpdateCartMutation } from "./redux/services/customerApi";
 
 const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
   const navigate = useNavigate();
@@ -42,6 +43,15 @@ const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
     category: dish.category || "",
   });
   const [imagePath, setImagePath] = useState(dish.imageUrl);
+  const dispatch = useDispatch();
+  const [updateCart] = useUpdateCartMutation();
+  const user = useSelector((state) => state.customer.customerData);
+  const cartItems = user?.cartItems || [];
+  const quantity = cartItems.filter((id) => id === String(dish.id)).length;
+  const stopClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   // ✅ RTK Query mutation
   const [updateDish] = useUpdateDishMutation();
@@ -101,6 +111,28 @@ const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
       return stars;
     };
   }, []);
+
+  const handleUpdateQty = async (type) => {
+    if (!user?.email) {
+      alert("Please login first");
+      return;
+    }
+
+    let newCart = [...cartItems];
+
+    if (type === "inc") {
+      newCart.push(String(dish.id));
+    } else if (type === "dec") {
+      const index = newCart.indexOf(String(dish.id));
+      if (index !== -1) newCart.splice(index, 1);
+    }
+
+    // update backend
+    await updateCart({ id: user.email, cart: newCart });
+
+    // update redux
+    dispatch(updateCartSuccess({ cartItems: newCart }));
+  };
 
   if (isEditing) {
     return (
@@ -244,11 +276,50 @@ const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
             {dish.name}
           </Typography>
 
-          {dish.available && (
-            <Button variant="outlined" className={styles.addBtun}>
-              ADD
-            </Button>
-          )}
+          {dish.available &&
+            (quantity === 0 ? (
+              <Button
+                variant="contained"
+                className={styles.addBtun}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  stopClick(e);
+                  handleUpdateQty("inc");
+                }}
+              >
+                ADD
+              </Button>
+            ) : (
+              <div
+                className={styles.controls}
+                onClick={(e) => {
+                  stopClick(e);
+                  e.stopPropagation();
+                }}
+              >
+                <button
+                  className={styles.controlBtn}
+                  onClick={(e) => {
+                    stopClick(e);
+                    handleUpdateQty("dec");
+                  }}
+                >
+                  −
+                </button>
+
+                <span className={styles.controlQty}>{quantity}</span>
+
+                <button
+                  className={styles.controlBtn}
+                  onClick={(e) => {
+                    stopClick(e);
+                    handleUpdateQty("inc");
+                  }}
+                >
+                  +
+                </button>
+              </div>
+            ))}
         </Box>
 
         {/* Price + Discount */}

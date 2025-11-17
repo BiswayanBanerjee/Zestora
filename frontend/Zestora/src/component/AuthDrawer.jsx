@@ -26,10 +26,9 @@ import { setCredentials } from "./redux/slices/authSlice";
 import styles from "./AuthDrawer.module.css";
 import { auth, provider } from "./firebaseConfig";
 import { signInWithPopup } from "firebase/auth";
-import { useGetCustomerByIdQuery } from "./redux/services/customerApi";
 import { customerApi } from "./redux/services/customerApi";
 import { useLazyCheckUserQuery } from "./redux/services/authApi";
-
+import { setCustomer, setCustomerData } from "./redux/slices/customerSlice";
 import { store } from "./redux/store";
 
 const AuthDrawer = ({ open, onClose }) => {
@@ -108,19 +107,46 @@ const AuthDrawer = ({ open, onClose }) => {
   const handleLogin = async (data) => {
     try {
       const result = await login(data).unwrap();
+      console.log("RAW LOGIN RESPONSE:", result);
 
-      if (result.token) {
-        // ✅ Save both token and user (for instant re-render)
-        dispatch(setCredentials({ token: result.token, user: result.user }));
-        localStorage.setItem("token", result.token);
-        localStorage.setItem("user", JSON.stringify(result.user));
-        onClose();
-      } else {
-        setError("Invalid credentials");
+      // Extract token
+      const token = result.token;
+
+      if (!token) {
+        setError("Token missing in response");
+        return;
       }
+
+      // Build user from backend response
+      const user = {
+        email: result.email,
+        role: result.role,
+      };
+
+      // 1️⃣ Save ONLY token in localStorage
+      localStorage.setItem("token", token);
+
+      // 2️⃣ Update auth slice (will decode token → creates user)
+      dispatch(setCredentials({ token }));
+
+      // 3️⃣ Save user basics in customer slice
+      dispatch(setCustomer(user));
+
+      // 4️⃣ Fetch full customer profile (has firstName, lastName, cart)
+      const profileRes = await fetch(
+        `${import.meta.env.VITE_CUSTOMER_API_BASE_URL}/customers/${user.email}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const fullProfile = await profileRes.json();
+      dispatch(setCustomerData(fullProfile));
+
+      onClose();
     } catch (err) {
       console.error("Login error:", err);
-      setError("Login failed. Please try again.");
+      setError("Login failed. Please try again");
     }
   };
 

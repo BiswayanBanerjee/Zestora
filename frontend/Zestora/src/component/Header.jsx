@@ -21,7 +21,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { clearCredentials } from "./redux/slices/authSlice";
 import { useGetCartQuery } from "./redux/services/customerApi";
-import { setCustomer, clearCustomer } from "./redux/slices/customerSlice"; // ✅ new
+import { setCustomerData, clearCustomer } from "./redux/slices/customerSlice"; // ✅ new
 import styles from "./Header.module.css";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -29,6 +29,7 @@ import MonitorIcon from "@mui/icons-material/Monitor";
 import Paper from "@mui/material/Paper";
 import List from "@mui/material/List";
 import { useGetRestaurantsQuery } from "./redux/services/restaurantApi";
+import { updateCartSuccess } from "./redux/slices/customerSlice";
 
 const Header = ({ setThemePreference }) => {
   const dispatch = useDispatch();
@@ -36,7 +37,44 @@ const Header = ({ setThemePreference }) => {
 
   // ✅ Auth + Customer state
   const { token, user } = useSelector((state) => state.auth);
-  const { customer } = useSelector((state) => state.customer);
+  const customerData = useSelector((state) => state.customer.customerData);
+
+  // 🔥 Auto load customer profile on page reload
+  useEffect(() => {
+    if (!user?.email || !token) return;
+
+    const loadCustomerProfile = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_CUSTOMER_API_BASE_URL}/customers/${
+            user.email
+          }`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (res.ok) {
+          const fullProfile = await res.json();
+
+          // store full profile
+          dispatch(setCustomerData(fullProfile));
+
+          // restore cart instantly
+          if (Array.isArray(fullProfile.customerCart)) {
+            dispatch(
+              updateCartSuccess({ cartItems: fullProfile.customerCart })
+            );
+          }
+        }
+      } catch (err) {
+        console.error("Auto-load customer profile failed:", err);
+      }
+    };
+
+    loadCustomerProfile();
+  }, [user?.email, token]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [theme, setTheme] = useState(
     localStorage.getItem("themePreference") || "system"
@@ -48,12 +86,13 @@ const Header = ({ setThemePreference }) => {
   // City dropdown
   const [cityAnchorEl, setCityAnchorEl] = useState(null);
   const isCityMenuOpen = Boolean(cityAnchorEl);
-  const primaryAddress = customer?.customerAddress?.[0] || null;
+  const primaryAddress = customerData?.customerAddress?.[0] || null;
   const customerCity = primaryAddress?.city || "Select City";
+
   const [selectedCity, setSelectedCity] = useState(
     customerCity || "Select City"
   );
-  const firstName = customer?.firstName || null;
+  const firstName = customerData?.firstName;
   // ✅ Extract primary city
 
   // Profile dropdown
@@ -115,44 +154,43 @@ const Header = ({ setThemePreference }) => {
 
   // ✅ Cart count from RTK Query
   // ✅ Cart count from RTK Query
-  const { data: cartItems } = useGetCartQuery(user?.email, {
-    skip: !user?.email,
-    pollingInterval: 5000,
-  });
-  const cartCount = Array.isArray(cartItems) ? cartItems.length : 0;
+  const cartItems = useSelector(
+    (state) => state.customer.customerData?.cartItems || []
+  );
+  const cartCount = cartItems.length;
 
-  // ✅ Sync customer data once user logs in
-  useEffect(() => {
-    if (!user?.email) {
-      dispatch(clearCustomer());
-      return;
-    }
+  // // ✅ Sync customer data once user logs in
+  // useEffect(() => {
+  //   if (!user?.email) {
+  //     dispatch(clearCustomer());
+  //     return;
+  //   }
 
-    // Instead of calling RTK Query hook here, you can fetch once during login
-    // For safety, fallback: fetch via RTK Query dynamically
-    const fetchCustomer = async () => {
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_CUSTOMER_API_BASE_URL}/customers/${
-            user.email
-          }`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        if (res.ok) {
-          const data = await res.json();
-          dispatch(setCustomer(data));
-        }
-      } catch (err) {
-        console.error("Failed to fetch customer", err);
-      }
-    };
+  //   // Instead of calling RTK Query hook here, you can fetch once during login
+  //   // For safety, fallback: fetch via RTK Query dynamically
+  //   const fetchCustomer = async () => {
+  //     try {
+  //       const res = await fetch(
+  //         `${import.meta.env.VITE_CUSTOMER_API_BASE_URL}/customers/${
+  //           user.email
+  //         }`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //           },
+  //         }
+  //       );
+  //       if (res.ok) {
+  //         const data = await res.json();
+  //         dispatch(setCustomer(data));
+  //       }
+  //     } catch (err) {
+  //       console.error("Failed to fetch customer", err);
+  //     }
+  //   };
 
-    fetchCustomer();
-  }, [user, dispatch]);
+  //   fetchCustomer();
+  // }, [user, dispatch]);
 
   // Handle Logout
   const handleLogout = () => {

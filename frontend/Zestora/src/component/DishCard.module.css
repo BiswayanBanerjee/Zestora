@@ -215,3 +215,38 @@
   display: flex;
   justify-content: space-between;
 }
+
+/* ⬇️ SAME as DishListCard */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #ff5722 !important;
+  padding: 2px 6px;
+  z-index: 5;
+}
+
+.controlBtn {
+  padding: 6px 10px;
+  font-size: 18px;
+  font-weight: bold;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: white !important;
+  transition: background 0.2s ease;
+}
+
+.controlBtn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.controlQty {
+  padding: 0 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white !important;
+}

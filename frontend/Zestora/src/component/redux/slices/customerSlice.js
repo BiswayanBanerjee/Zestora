@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  customer: null,             // logged-in user object
-  customerData: null,         // full customer profile (with cart, orders, etc.)
+  customer: null,
+  customerData: { cartItems: [] }, // IMPORTANT!!
 };
 
 const customerSlice = createSlice({
@@ -13,28 +13,32 @@ const customerSlice = createSlice({
       state.customer = action.payload;
     },
 
-    clearCustomer: (state) => {
-      state.customer = null;
-      state.customerData = null;
+    setCustomerData: (state, action) => {
+      state.customerData = {
+        ...state.customerData,
+        ...action.payload, // can contain cartItems
+      };
     },
 
-    setCustomerData: (state, action) => {
-      state.customerData = action.payload;   // set full customer data
+    clearCustomer: (state) => {
+      state.customer = null;
+      state.customerData = { cartItems: [] };
     },
 
     updateCartSuccess: (state, action) => {
-      if (!state.customerData) return;
-
-      state.customerData.cartItems = action.payload.cartItems;
+      state.customerData = {
+        ...state.customerData,
+        cartItems: action.payload.cartItems, // NEW OBJECT 🔥 triggers rerender
+      };
     },
   },
 });
 
-export const { 
-  setCustomer, 
-  clearCustomer, 
-  setCustomerData, 
-  updateCartSuccess 
+export const {
+  setCustomer,
+  clearCustomer,
+  setCustomerData,
+  updateCartSuccess,
 } = customerSlice.actions;
 
 export default customerSlice.reducer;

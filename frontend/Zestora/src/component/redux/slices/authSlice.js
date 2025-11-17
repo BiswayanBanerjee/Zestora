@@ -18,25 +18,19 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     token: token || null,
-    user: initialUser,
+    user: initialUser || null, // empty until decoded
   },
   reducers: {
     setCredentials: (state, action) => {
-      const { token, user } = action.payload;
+      const { token } = action.payload;
       state.token = token;
 
-      if (user) {
-        // use the provided user (from backend)
-        state.user = user;
-      } else {
-        // fallback: decode manually if no user object was passed
-        try {
-          const decoded = jwtDecode(token);
-          state.user = { email: decoded.sub, role: decoded.role };
-        } catch (e) {
-          console.error("Error decoding token", e);
-          state.user = null;
-        }
+      try {
+        const decoded = jwtDecode(token);
+        state.user = { email: decoded.sub, role: decoded.role };
+      } catch (e) {
+        console.error("Decode failed:", e);
+        state.user = null;
       }
     },
     clearCredentials: (state) => {

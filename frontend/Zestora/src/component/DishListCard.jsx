@@ -3,11 +3,7 @@ import { Box, Typography, Button, Modal } from "@mui/material";
 import DishCard from "./DishCard";
 import styles from "./DishListCard.module.css"; // ✅ CSS module import
 import { useTheme } from "@mui/material/styles";
-import {
-  useGetCartQuery,
-  useUpdateCartMutation,
-} from "./redux/services/customerApi";
-
+import { useUpdateCartMutation } from "./redux/services/customerApi";
 import { updateCartSuccess } from "./redux/slices/customerSlice";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -19,8 +15,13 @@ const DishListCard = ({ dish }) => {
   const [displayText, setDisplayText] = useState("");
   const descRef = useRef(null);
   const { background } = useTheme().palette;
-  const user = useSelector((state) => state.customer.customer);
+  const user = useSelector((state) => state.auth.user);
+  const cartItems = useSelector(
+    (state) => state.customer.customerData.cartItems || []
+  );
+  const quantity = cartItems.filter((id) => id === String(dish.id)).length;
   const dispatch = useDispatch();
+  const [updateCart] = useUpdateCartMutation();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 600);
@@ -65,9 +66,6 @@ const DishListCard = ({ dish }) => {
     setDisplayText(truncated);
   }, [dish.description, expanded, isMobile]);
 
-  const { data: cartResponse } = useGetCartQuery(user?.email);
-  const [updateCart] = useUpdateCartMutation();
-
   const handleAddToCart = async () => {
     if (!user) {
       alert("Please login first");
@@ -75,10 +73,10 @@ const DishListCard = ({ dish }) => {
     }
 
     // Step 1: correct cart reading format
-    const existingCartItems = Array.isArray(cartResponse) ? cartResponse : [];
+    const existingCartItems = cartItems;
 
     // Step 2: add ONE quantity
-    const updatedCartItems = [...existingCartItems, dish.id];
+    const updatedCartItems = [...existingCartItems, String(dish.id)];
 
     // Step 3: update backend using correct format
     await updateCart({
@@ -90,6 +88,25 @@ const DishListCard = ({ dish }) => {
     dispatch(updateCartSuccess({ cartItems: updatedCartItems }));
 
     console.log("Cart:", updatedCartItems);
+  };
+
+  const handleUpdateQty = async (type) => {
+    if (!user) return alert("Please login first");
+
+    let newCart = [...cartItems];
+
+    if (type === "inc") {
+      newCart.push(String(dish.id));
+    } else if (type === "dec") {
+      const index = newCart.indexOf(String(dish.id));
+      if (index !== -1) newCart.splice(index, 1);
+    }
+
+    // Backend update
+    await updateCart({ id: user.email, cart: newCart });
+
+    // Redux update
+    dispatch(updateCartSuccess({ cartItems: newCart }));
   };
 
   return (
@@ -147,20 +164,33 @@ const DishListCard = ({ dish }) => {
             onClick={() => setOpen(true)}
           />
 
-          {dish.available && (
-            <>
+          {/* RIGHT SECTION BUTTONS */}
+          {dish.available &&
+            (quantity === 0 ? (
               <Button
                 variant="contained"
-                onClick={handleAddToCart}
                 className={styles.addBtn}
+                onClick={() => handleUpdateQty("inc")}
               >
                 ADD
               </Button>
-              <Typography className={styles.customisable}>
-                Customisable
-              </Typography>
-            </>
-          )}
+            ) : (
+              <div className={styles.controls}>
+                <button
+                  className={styles.controlBtn}
+                  onClick={() => handleUpdateQty("dec")}
+                >
+                  −
+                </button>
+                <span className={styles.controlQty}>{quantity}</span>
+                <button
+                  className={styles.controlBtn}
+                  onClick={() => handleUpdateQty("inc")}
+                >
+                  +
+                </button>
+              </div>
+            ))}
 
           {!dish.available && (
             <Box className={styles.overlay}>
