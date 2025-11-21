@@ -292,7 +292,7 @@
 }
 
 /* Theme icons */
-.themeIconLight {
+/* .themeIconLight {
   color: #fbc02d;
 }
 
@@ -302,7 +302,7 @@
 
 .themeIconSystem {
   color: #fff;
-}
+} */
 
 
 .searchBox {
@@ -505,4 +505,3 @@ body.dark,
   /* thumb, track */
   scrollbar-width: thin;
 }
-

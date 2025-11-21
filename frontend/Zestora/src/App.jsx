@@ -12,7 +12,7 @@ import DishDetail from "./component/DishDetail";
 import AccountDashboard from "./component/AccountDashboard";
 import RestaurantView from "./component/RestaurantView";
 import useAppTheme from "./theme";
-import { ThemeProvider, CssBaseline } from "@mui/material";
+import { ThemeProvider, CssBaseline, LinearProgress } from "@mui/material";
 import { useGetRestaurantsQuery } from "./component/redux/services/restaurantApi";
 import AuthDrawer from "./component/AuthDrawer";
 
@@ -34,9 +34,9 @@ const App = () => {
     setIsWarmingUp(true);
 
     const urls = {
-      auth: `${import.meta.env.VITE_AUTH_WAKE_URL}/wake`,
-      customer: `${import.meta.env.VITE_CUSTOMER_WAKE_URL}/wake`,
-      restaurant: `${import.meta.env.VITE_RESTAURANT_WAKE_URL}/wake`,
+      auth: `${import.meta.env.VITE_AUTH_API_BASE_URL}/wake`,
+      customer: `${import.meta.env.VITE_CUSTOMER_API_BASE_URL}/wake`,
+      restaurant: `${import.meta.env.VITE_RESTAURANT_API_BASE_URL}/wake`,
     };
 
     let delay = 500;
@@ -45,44 +45,43 @@ const App = () => {
     const start = Date.now();
 
     const checkWake = async () => {
-  if (Date.now() - start > timeout) {
-    console.warn("⚠ Timeout: Some servers failed to wake.");
-    setIsWarmingUp(false);
-    return;
-  }
-
-  // FIX: always create full object
-  const newStatus = {
-    auth: false,
-    customer: false,
-    restaurant: false,
-  };
-
-  await Promise.all(
-    Object.keys(urls).map(async (key) => {
-      try {
-        const res = await fetch(urls[key]);
-        newStatus[key] = res.ok;
-      } catch {
-        newStatus[key] = false;
+      if (Date.now() - start > timeout) {
+        console.warn("⚠ Timeout: Some servers failed to wake.");
+        setIsWarmingUp(false);
+        return;
       }
-    })
-  );
 
-  setServerStatus(newStatus);
+      // FIX: always create full object
+      const newStatus = {
+        auth: false,
+        customer: false,
+        restaurant: false,
+      };
 
-  const allAwake = Object.values(newStatus).every((v) => v === true);
+      await Promise.all(
+        Object.keys(urls).map(async (key) => {
+          try {
+            const res = await fetch(urls[key]);
+            newStatus[key] = res.ok;
+          } catch {
+            newStatus[key] = false;
+          }
+        })
+      );
 
-  if (allAwake) {
-    console.log("🎉 All servers awake!");
-    setIsWarmingUp(false);
-    return;
-  }
+      setServerStatus(newStatus);
 
-  delay = Math.min(delay * 2, maxDelay);
-  setTimeout(checkWake, delay);
-};
+      const allAwake = Object.values(newStatus).every((v) => v === true);
 
+      if (allAwake) {
+        console.log("🎉 All servers awake!");
+        setIsWarmingUp(false);
+        return;
+      }
+
+      delay = Math.min(delay * 2, maxDelay);
+      setTimeout(checkWake, delay);
+    };
 
     checkWake();
   }, []);
@@ -110,44 +109,44 @@ const App = () => {
     }
   }, [location.pathname]);
 
+  const StatusBadge = ({ label, ready }) => (
+    <Typography
+      sx={{
+        fontSize: "16px",
+        fontWeight: 600,
+        mt: 1,
+        color: ready ? "green" : "orange",
+      }}
+    >
+      {ready ? `✔ ${label} Ready` : `⏳ ${label} Waking…`}
+    </Typography>
+  );
+
   if (isWarmingUp) {
     return (
       <Box
         sx={{
+          height: "100vh",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          height: "100vh",
           textAlign: "center",
-          bgcolor: theme.palette.background.default,
+          px: 3,
         }}
       >
-        <CircularProgress />
-        <Typography variant="h6" sx={{ mt: 2 }}>
-          Warming up servers... please wait 20–40 seconds
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+          Initializing Backend Services…
         </Typography>
 
-        <Box sx={{ mt: 3, textAlign: "left" }}>
-          <Typography>
-            <b>Server Status:</b>
-          </Typography>
+        <Box sx={{ width: "300px", mt: 4 }}>
+          <LinearProgress />
+        </Box>
 
-          <Typography color={serverStatus.auth ? "green" : "red"}>
-            {serverStatus.auth ? "✔ Auth Awake" : "⏳ Waking Auth..."}
-          </Typography>
-
-          <Typography color={serverStatus.customer ? "green" : "red"}>
-            {serverStatus.customer
-              ? "✔ Customer Awake"
-              : "⏳ Waking Customer..."}
-          </Typography>
-
-          <Typography color={serverStatus.restaurant ? "green" : "red"}>
-            {serverStatus.restaurant
-              ? "✔ Restaurant Awake"
-              : "⏳ Waking Restaurant..."}
-          </Typography>
+        <Box sx={{ mt: 4 }}>
+          <StatusBadge label="Auth" ready={serverStatus.auth} />
+          <StatusBadge label="Customer" ready={serverStatus.customer} />
+          <StatusBadge label="Restaurant" ready={serverStatus.restaurant} />
         </Box>
       </Box>
     );

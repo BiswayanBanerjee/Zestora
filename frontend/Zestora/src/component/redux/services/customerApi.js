@@ -1,7 +1,7 @@
 // src/redux/services/customerApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const CUSTOMER = import.meta.env.VITE_CUSTOMER_API_BASE_URL;
+const CUSTOMER = `${import.meta.env.VITE_CUSTOMER_API_BASE_URL}/api`;
 
 export const customerApi = createApi({
   reducerPath: "customerApi",

@@ -46,7 +46,7 @@ const Header = ({ setThemePreference }) => {
     const loadCustomerProfile = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_CUSTOMER_API_BASE_URL}/customers/${
+          `${import.meta.env.VITE_CUSTOMER_API_BASE_URL}/api/customers/${
             user.email
           }`,
           {

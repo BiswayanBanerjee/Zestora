@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-const RESTAURANT = import.meta.env.VITE_RESTAURANT_API_BASE_URL;
+const RESTAURANT = `${import.meta.env.VITE_RESTAURANT_API_BASE_URL}/api`;
 
 export const dishApi = createApi({
   reducerPath: "dishApi",

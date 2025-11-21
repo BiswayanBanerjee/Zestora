@@ -134,7 +134,7 @@ const AuthDrawer = ({ open, onClose }) => {
 
       // 4️⃣ Fetch full customer profile (has firstName, lastName, cart)
       const profileRes = await fetch(
-        `${import.meta.env.VITE_CUSTOMER_API_BASE_URL}/customers/${user.email}`,
+        `${import.meta.env.VITE_CUSTOMER_API_BASE_URL}/api/customers/${user.email}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
