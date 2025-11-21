@@ -45,40 +45,44 @@ const App = () => {
     const start = Date.now();
 
     const checkWake = async () => {
-      if (Date.now() - start > timeout) {
-        console.warn("⚠ Timeout: Some servers failed to wake.");
-        setIsWarmingUp(false);
-        return;
+  if (Date.now() - start > timeout) {
+    console.warn("⚠ Timeout: Some servers failed to wake.");
+    setIsWarmingUp(false);
+    return;
+  }
+
+  // FIX: always create full object
+  const newStatus = {
+    auth: false,
+    customer: false,
+    restaurant: false,
+  };
+
+  await Promise.all(
+    Object.keys(urls).map(async (key) => {
+      try {
+        const res = await fetch(urls[key]);
+        newStatus[key] = res.ok;
+      } catch {
+        newStatus[key] = false;
       }
+    })
+  );
 
-      // 🔥 FIX: always rebuild fresh status object
-      const newStatus = {};
+  setServerStatus(newStatus);
 
-      await Promise.all(
-        Object.keys(urls).map(async (key) => {
-          try {
-            const res = await fetch(urls[key]);
-            newStatus[key] = res.ok;
-          } catch {
-            newStatus[key] = false;
-          }
-        })
-      );
+  const allAwake = Object.values(newStatus).every((v) => v === true);
 
-      setServerStatus(newStatus);
-      console.log("Wake status:", newStatus);
+  if (allAwake) {
+    console.log("🎉 All servers awake!");
+    setIsWarmingUp(false);
+    return;
+  }
 
-      const allAwake = Object.values(newStatus).every((r) => r === true);
+  delay = Math.min(delay * 2, maxDelay);
+  setTimeout(checkWake, delay);
+};
 
-      if (allAwake) {
-        console.log("🎉 All servers awake!");
-        setIsWarmingUp(false);
-        return;
-      }
-
-      delay = Math.min(delay * 2, maxDelay);
-      setTimeout(checkWake, delay);
-    };
 
     checkWake();
   }, []);

@@ -13,6 +13,8 @@
   background: inherit; ensure background covers content under scroll */
   width: 100%;
   /* background stretches full width */
+  position: relative;
+  z-index: 1100 !important;
 }
 
 .headerInner {
@@ -503,3 +505,4 @@ body.dark,
   /* thumb, track */
   scrollbar-width: thin;
 }
+

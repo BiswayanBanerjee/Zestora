@@ -655,6 +655,8 @@ export default function AccountDashboard() {
 
           setIsAddDrawerOpen(false);
           setEditingAddress(null);
+          // Refresh customer data from backend
+          refetchCustomer();
         }}
       />
     </div>

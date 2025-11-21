@@ -148,7 +148,7 @@ const DishList = ({ restaurants = [] }) => {
                 />
 
                 {/* Top-left badge */}
-                <Box className="badgeTopLeft">One Free delivery</Box>
+                <Box className="badgeTopLeft">Free delivery</Box>
 
                 {/* Bottom badge */}
                 <Box className="badgeBottom">
