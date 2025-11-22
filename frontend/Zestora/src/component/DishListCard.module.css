@@ -161,7 +161,7 @@
 }
 
 .modalBox {
-  border-radius: 120px !important;
+  border-radius: 0px !important;
 }
 
 
@@ -208,4 +208,13 @@
 .controlBtn:hover {
   background: rgba(0, 0, 0, 0.08);
   /* light fade */
+}
+
+.fallbackIcon {
+  width: 100%;
+  height: 100%;
+  background: var(--mui-palette-background-paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

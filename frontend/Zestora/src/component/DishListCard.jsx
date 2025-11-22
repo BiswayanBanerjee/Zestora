@@ -6,6 +6,7 @@ import { useTheme } from "@mui/material/styles";
 import { useUpdateCartMutation } from "./redux/services/customerApi";
 import { updateCartSuccess } from "./redux/slices/customerSlice";
 import { useSelector, useDispatch } from "react-redux";
+import RamenDiningOutlinedIcon from '@mui/icons-material/RamenDiningOutlined';
 
 const DishListCard = ({ dish }) => {
   const imageUrl = `/${dish.imageUrl}`;
@@ -22,6 +23,7 @@ const DishListCard = ({ dish }) => {
   const quantity = cartItems.filter((id) => id === String(dish.id)).length;
   const dispatch = useDispatch();
   const [updateCart] = useUpdateCartMutation();
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 600);
@@ -157,12 +159,19 @@ const DishListCard = ({ dish }) => {
             !dish.available ? styles.notAvailableBox : ""
           }`}
         >
-          <img
-            src={imageUrl}
-            alt={dish.name}
-            className={styles.dishImage}
-            onClick={() => setOpen(true)}
-          />
+          {!imageError ? (
+            <img
+              src={imageUrl}
+              alt={dish.name}
+              className={styles.dishImage}
+              onClick={() => setOpen(true)}
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <Box className={styles.fallbackIcon} onClick={() => setOpen(true)}>
+              <RamenDiningOutlinedIcon sx={{ fontSize: 80, color: "#aaa" }} />
+            </Box>
+          )}
 
           {/* RIGHT SECTION BUTTONS */}
           {dish.available &&

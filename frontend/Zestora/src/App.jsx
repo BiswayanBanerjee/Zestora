@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Routes, Route, useParams, useLocation } from "react-router-dom";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Typography,
+  ThemeProvider,
+  CssBaseline,
+  LinearProgress,
+} from "@mui/material";
 import Navbar from "./component/Navbar";
 import Header from "./component/Header";
 import DishManager from "./component/DishManager";
@@ -12,7 +18,6 @@ import DishDetail from "./component/DishDetail";
 import AccountDashboard from "./component/AccountDashboard";
 import RestaurantView from "./component/RestaurantView";
 import useAppTheme from "./theme";
-import { ThemeProvider, CssBaseline, LinearProgress } from "@mui/material";
 import { useGetRestaurantsQuery } from "./component/redux/services/restaurantApi";
 import AuthDrawer from "./component/AuthDrawer";
 

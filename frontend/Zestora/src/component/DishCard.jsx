@@ -25,6 +25,7 @@ import styles from "./DishCard.module.css"; // ✅ CSS module import
 import { useSelector, useDispatch } from "react-redux";
 import { updateCartSuccess } from "./redux/slices/customerSlice";
 import { useUpdateCartMutation } from "./redux/services/customerApi";
+import RamenDiningOutlinedIcon from "@mui/icons-material/RamenDiningOutlined";
 
 const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
   const navigate = useNavigate();
@@ -48,13 +49,8 @@ const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
   const user = useSelector((state) => state.customer.customerData);
   const cartItems = user?.cartItems || [];
   const quantity = cartItems.filter((id) => id === String(dish.id)).length;
-  const stopClick = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  // ✅ RTK Query mutation
   const [updateDish] = useUpdateDishMutation();
+  const [imageError, setImageError] = useState(false);
 
   const handleInputChange = useCallback((e) => {
     const { name, value, type, checked } = e.target;
@@ -232,17 +228,16 @@ const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
       className={`${styles.dishCard} ${
         dish.available ? styles.available : styles.notAvailable
       }`}
-      onClick={() => {
-        if (dish.available) {
-          navigate(`/dish/${dish.id}`, { state: { dish } });
-        }
-      }}
+      // onClick={() => {
+      //   if (dish.available) {
+      //     navigate(`/dish/${dish.id}`, { state: { dish } });
+      //   }
+      // }}
     >
       {isOwner && (
         <>
           <IconButton
             onClick={(e) => {
-              e.stopPropagation();
               onDelete(dish.id);
             }}
             className={styles.deleteBtn}
@@ -251,7 +246,6 @@ const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
           </IconButton>
           <IconButton
             onClick={(e) => {
-              e.stopPropagation();
               setIsEditing(true);
             }}
             className={styles.editBtn}
@@ -261,12 +255,19 @@ const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
         </>
       )}
       <div className={styles.dishImageWrapper}>
-        <LazyLoadImage
-          src={imageUrl}
-          alt={dish.name}
-          effect="blur"
-          className={styles.dishCardImage}
-        />
+        {!imageError ? (
+          <LazyLoadImage
+            src={imageUrl}
+            alt={dish.name}
+            effect="blur"
+            className={styles.dishCardImage}
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className={styles.fallbackIconWrapper}>
+            <RamenDiningOutlinedIcon sx={{ fontSize: 100, opacity: 0.6 }} />
+          </div>
+        )}
       </div>
 
       <CardContent className={styles.dishContent}>
@@ -282,25 +283,16 @@ const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
                 variant="contained"
                 className={styles.addBtun}
                 onClick={(e) => {
-                  e.stopPropagation();
-                  stopClick(e);
                   handleUpdateQty("inc");
                 }}
               >
                 ADD
               </Button>
             ) : (
-              <div
-                className={styles.controls}
-                onClick={(e) => {
-                  stopClick(e);
-                  e.stopPropagation();
-                }}
-              >
+              <div className={styles.controls} onClick={(e) => {}}>
                 <button
                   className={styles.controlBtn}
                   onClick={(e) => {
-                    stopClick(e);
                     handleUpdateQty("dec");
                   }}
                 >
@@ -312,7 +304,6 @@ const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {
                 <button
                   className={styles.controlBtn}
                   onClick={(e) => {
-                    stopClick(e);
                     handleUpdateQty("inc");
                   }}
                 >

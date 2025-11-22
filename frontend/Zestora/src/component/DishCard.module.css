@@ -19,7 +19,6 @@
   flex-direction: column;
   justify-content: space-between;
   transition: box-shadow 0.2s ease;
-  cursor: pointer;
   background: var(--mui-palette-background-paper);
   color: var(--mui-palette-text-primary);
   font-family: var(--mui-font-family);
@@ -249,4 +248,18 @@
   font-size: 15px;
   font-weight: 600;
   color: white !important;
+}
+
+.fallbackIconWrapper {
+  width: 100%;
+  height: 200px; /* match your image height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mui-palette-background-paper);
+}
+
+.fallbackIcon {
+  font-size: 48px;
+  opacity: 0.6;
 }
