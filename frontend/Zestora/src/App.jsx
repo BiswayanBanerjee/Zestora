@@ -221,9 +221,9 @@ const App = () => {
           setThemePreference={setThemePreference}
         />
         <AuthDrawer open={authOpen} onClose={() => setAuthOpen(false)} />
-        {location.pathname === "/" && (
+        {/* {location.pathname === "/" && (
           <Navbar products={restaurants} onSearchDish={handleFilterDish} />
-        )}
+        )} */}
         <Routes>
           <Route path="/" element={<DishManager products={filteredDish} />} />
           <Route

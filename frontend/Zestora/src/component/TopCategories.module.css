@@ -1,0 +1,125 @@
+/* ====== MAIN CONTAINER ====== */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  /* center everything */
+  padding: 0;
+  /* prevent overflow */
+}
+
+/* ====== HEADING ====== */
+.heading {
+  font-size: x-large !important;
+  /* font-weight: 300 !important; */
+  margin-bottom: 20px !important;
+  text-align: left;
+  /* stays inside container */
+  width: 100%;
+}
+
+/* ====== GRID LAYOUT ====== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  /* desktop */
+  gap: 40px;
+  justify-items: center;
+}
+
+/* ====== CATEGORY ITEM ====== */
+.category {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.category:hover {
+  transform: scale(1.08);
+}
+
+/* ====== ICON IMAGE ====== */
+.icon {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Fix only pizza icon */
+.pizzaIcon {
+  object-fit: contain !important;
+  transform: scale(0.85);
+}
+
+/* ====== LABEL ====== */
+.label {
+  margin-top: 8px;
+  font-weight: 500;
+  color: var(--mui-palette-text-primary);
+}
+
+/* ==========================================
+   📱 TABLET VIEW (700px–1060px)
+   Keep layout clean in medium screens
+   ========================================== */
+@media (max-width: 1060px) {
+  .grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 30px;
+  }
+}
+
+/* ==========================================
+   📱 MOBILE VIEW (<700px)
+   4 items per row
+   ========================================== */
+@media (max-width: 770px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .label {
+    font-size: 12px;
+  }
+
+  .heading {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .pizzaIcon {
+    transform: scale(0.75);
+  }
+}
+
+/* ==========================================
+   📱 SMALL MOBILE (<400px)
+   3 items per row
+   ========================================== */
+@media (max-width: 400px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+
+  .heading {
+    font-size: larger !important;
+  }
+}
