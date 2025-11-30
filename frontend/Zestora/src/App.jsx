@@ -1,13 +1,11 @@
 import React, { Suspense, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Routes, Route, useParams, useLocation } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  ThemeProvider,
-  CssBaseline,
-  LinearProgress,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import LinearProgress from "@mui/material/LinearProgress";
 import Header from "./component/Header";
 import DishManager from "./component/DishManager";
 import Footer from "./component/Footer";

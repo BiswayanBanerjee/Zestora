@@ -1,16 +1,4 @@
 import React, { useEffect, useState } from 'react';
-// import {
-//   Grid,
-//   Typography,
-//   Card,
-//   CardContent,
-//   CardMedia,
-//   Box,
-//   Switch,
-//   IconButton,
-//   useMediaQuery,
-//   useTheme,
-// } from '@mui/material';
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";

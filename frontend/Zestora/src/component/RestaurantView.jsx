@@ -1,22 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-// import {
-//   Typography,
-//   Grid,
-//   Box,
-//   Card,
-//   CardContent,
-//   IconButton,
-//   TextField,
-//   Button,
-//   Checkbox,
-//   FormControlLabel,
-//   Slider,
-//   CardMedia,
-//   ToggleButton,
-//   ToggleButtonGroup,
-//   Switch,
-// } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";

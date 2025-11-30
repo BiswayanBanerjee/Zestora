@@ -1,18 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-// import {
-//   Card,
-//   CardMedia,
-//   CardContent,
-//   Typography,
-//   Box,
-//   IconButton,
-//   TextField,
-//   Button,
-//   Checkbox,
-//   FormControlLabel,
-//   Slider,
-// } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";

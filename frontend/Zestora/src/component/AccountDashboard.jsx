@@ -2,14 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Avatar, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-// import {
-//   MenuBook as OrdersIcon,
-//   Favorite as FavoriteIcon,
-//   Payment as PaymentIcon,
-//   Home as AddressIcon,
-//   Settings as SettingsIcon,
-//   Search as SearchIcon,
-// } from "@mui/icons-material";
 import OrdersIcon from "@mui/icons-material/MenuBook";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import PaymentIcon from "@mui/icons-material/Payment";
