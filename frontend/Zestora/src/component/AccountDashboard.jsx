@@ -2,14 +2,20 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Avatar, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
-import {
-  MenuBook as OrdersIcon,
-  Favorite as FavoriteIcon,
-  Payment as PaymentIcon,
-  Home as AddressIcon,
-  Settings as SettingsIcon,
-  Search as SearchIcon,
-} from "@mui/icons-material";
+// import {
+//   MenuBook as OrdersIcon,
+//   Favorite as FavoriteIcon,
+//   Payment as PaymentIcon,
+//   Home as AddressIcon,
+//   Settings as SettingsIcon,
+//   Search as SearchIcon,
+// } from "@mui/icons-material";
+import OrdersIcon from "@mui/icons-material/MenuBook";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import PaymentIcon from "@mui/icons-material/Payment";
+import AddressIcon from "@mui/icons-material/Home";
+import SettingsIcon from "@mui/icons-material/Settings";
+import SearchIcon from "@mui/icons-material/Search";
 import { useSelector, useDispatch } from "react-redux";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
@@ -23,6 +29,7 @@ import Profile from "./Profile";
 import styles from "./AccountDashboard.module.css";
 import { useDeleteAddressMutation } from "./redux/services/customerApi";
 import AddAddressDrawer from "./AddAddressDrawer";
+// const AddAddressDrawer = React.lazy(() => import("./AddAddressDrawer"));
 
 const TABS = [
   { key: "orders", label: "Orders", Icon: OrdersIcon },

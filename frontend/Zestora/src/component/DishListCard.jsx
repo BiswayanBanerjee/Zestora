@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography, Button, Modal } from "@mui/material";
+// import { Box, Typography, Button, Modal } from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
 import DishCard from "./DishCard";
 import styles from "./DishListCard.module.css"; // ✅ CSS module import
 import { useTheme } from "@mui/material/styles";

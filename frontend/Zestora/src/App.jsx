@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Routes, Route, useParams, useLocation } from "react-router-dom";
 import {
@@ -8,18 +8,20 @@ import {
   CssBaseline,
   LinearProgress,
 } from "@mui/material";
-import Navbar from "./component/Navbar";
 import Header from "./component/Header";
 import DishManager from "./component/DishManager";
 import Footer from "./component/Footer";
-import OrderForm from "./component/OrderForm";
 import PrivateRoute from "./component/PrivateRoute";
-import DishDetail from "./component/DishDetail";
-import AccountDashboard from "./component/AccountDashboard";
-import RestaurantView from "./component/RestaurantView";
 import useAppTheme from "./theme";
 import { useGetRestaurantsQuery } from "./component/redux/services/restaurantApi";
 import AuthDrawer from "./component/AuthDrawer";
+// const Navbar = React.lazy(() => import("./component/Navbar"));
+const OrderForm = React.lazy(() => import("./component/OrderForm"));
+const DishDetail = React.lazy(() => import("./component/DishDetail"));
+const AccountDashboard = React.lazy(() =>
+  import("./component/AccountDashboard")
+);
+const RestaurantView = React.lazy(() => import("./component/RestaurantView"));
 
 const App = () => {
   const { theme, setThemePreference } = useAppTheme();
@@ -224,27 +226,29 @@ const App = () => {
         {/* {location.pathname === "/" && (
           <Navbar products={restaurants} onSearchDish={handleFilterDish} />
         )} */}
-        <Routes>
-          <Route path="/" element={<DishManager products={filteredDish} />} />
-          <Route
-            path="/dish/:dishId"
-            element={<DishDetail dish={restaurants} />}
-          />
-          <Route
-            element={<PrivateRoute onRequireAuth={() => setAuthOpen(true)} />}
-          >
-            <Route path="/profile" element={<AccountDashboard />} />
-            <Route path="/order" element={<OrderPage dish={restaurants} />} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<DishManager products={filteredDish} />} />
             <Route
-              path="/checkout"
-              element={<OrderForm dish={filteredDish} />}
+              path="/dish/:dishId"
+              element={<DishDetail dish={restaurants} />}
             />
-          </Route>
+            <Route
+              element={<PrivateRoute onRequireAuth={() => setAuthOpen(true)} />}
+            >
+              <Route path="/profile" element={<AccountDashboard />} />
+              <Route path="/order" element={<OrderPage dish={restaurants} />} />
+              <Route
+                path="/checkout"
+                element={<OrderForm dish={filteredDish} />}
+              />
+            </Route>
 
-          <Route path="/order-success" element={<OrderSuccess />} />
-          <Route path="/restaurant/:id" element={<RestaurantView />} />
-          <Route path="*" element={<div>404 - Page Not Found</div>} />
-        </Routes>
+            <Route path="/order-success" element={<OrderSuccess />} />
+            <Route path="/restaurant/:id" element={<RestaurantView />} />
+            <Route path="*" element={<div>404 - Page Not Found</div>} />
+          </Routes>
+        </Suspense>
         {location.pathname === "/" && <Footer />}
       </Box>
     </ThemeProvider>

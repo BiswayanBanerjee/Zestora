@@ -1,18 +1,29 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
-  Box,
-  IconButton,
-  TextField,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Slider,
-} from "@mui/material";
+// import {
+//   Card,
+//   CardMedia,
+//   CardContent,
+//   Typography,
+//   Box,
+//   IconButton,
+//   TextField,
+//   Button,
+//   Checkbox,
+//   FormControlLabel,
+//   Slider,
+// } from "@mui/material";
+import Card from "@mui/material/Card";
+import CardMedia from "@mui/material/CardMedia";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Slider from "@mui/material/Slider";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import StarIcon from "@mui/icons-material/Star";

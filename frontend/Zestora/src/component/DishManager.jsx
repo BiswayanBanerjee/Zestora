@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Card, CardContent, Typography, Button, Modal, TextField } from '@mui/material';
+// import { Box, Card, CardContent, Typography, Button, Modal, TextField } from '@mui/material';
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
 import DishList from './DishList';
 import { useTheme } from '@mui/material/styles';
 import Spa from '@mui/icons-material/Spa';

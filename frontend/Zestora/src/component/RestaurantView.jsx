@@ -1,22 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import {
-  Typography,
-  Grid,
-  Box,
-  Card,
-  CardContent,
-  IconButton,
-  TextField,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Slider,
-  CardMedia,
-  ToggleButton,
-  ToggleButtonGroup,
-  Switch,
-} from "@mui/material";
+// import {
+//   Typography,
+//   Grid,
+//   Box,
+//   Card,
+//   CardContent,
+//   IconButton,
+//   TextField,
+//   Button,
+//   Checkbox,
+//   FormControlLabel,
+//   Slider,
+//   CardMedia,
+//   ToggleButton,
+//   ToggleButtonGroup,
+//   Switch,
+// } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import IconButton from "@mui/material/IconButton";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Slider from "@mui/material/Slider";
+import CardMedia from "@mui/material/CardMedia";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Switch from "@mui/material/Switch";
 import AddIcon from "@mui/icons-material/Add";
 import SquareIcon from "@mui/icons-material/Stop"; // solid square icon
 import styles from "./RestaurantView.module.css";
