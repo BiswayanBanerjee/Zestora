@@ -1,23 +1,48 @@
 .restaurantView {
   display: flex;
   flex-direction: column;
-  align-items: center;   /* ✅ keep cards, filters, name centered as a block */
+  align-items: center;
+  /* ✅ keep cards, filters, name centered as a block */
   margin-top: 5px;
   background-color: var(--mui-palette-background-paper);
   padding-bottom: 2rem;
 }
+
 .restaurantName {
   margin-bottom: 50px !important;
   margin-top: 55px !important;
   font-weight: 600 !important;
 
-  width: 91%;           /* ✅ same shrink rate as filter + cards */
-  max-width: 900px;     /* ✅ cap at desktop */
+  width: 91%;
+  /* ✅ same shrink rate as filter + cards */
+  max-width: 900px;
+  /* ✅ cap at desktop */
   margin-left: auto;
   margin-right: auto;
 
-  text-align: left;     /* ✅ keep text aligned left */
+  text-align: left;
+  /* ✅ keep text aligned left */
+  flex-shrink: 1;
+  /* ⬅️ allow text to shrink on small screens */
+  margin: 0;
 }
+
+.titleBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* ⬅️ keeps them on same line */
+  width: 91%;
+  /* ⬅️ matches entire app layout */
+  max-width: 900px;
+  gap: 8px;
+}
+
+
+.titleBox .categoryFilter {
+  display: none;
+}
+
 
 /* 🔎 Search + Filter Bar */
 .filterBar {
@@ -26,8 +51,10 @@
   align-items: center;
   gap: 12px;
 
-  width: 91%;          /* ✅ same as DishListCard */
-  max-width: 900px;    /* ✅ cap on desktop */
+  width: 91%;
+  /* ✅ same as DishListCard */
+  max-width: 900px;
+  /* ✅ cap on desktop */
   margin: 0 auto 20px auto;
 }
 
@@ -35,9 +62,11 @@
   flex: 1;
   background-color: var(--mui-palette-background-paper);
 }
+
 .searchInput .MuiOutlinedInput-root fieldset {
   border-width: 1px !important;
 }
+
 .searchInput .MuiOutlinedInput-root.Mui-focused fieldset {
   border-color: var(--mui-palette-grey-500) !important;
   border-width: 1px !important;
@@ -48,24 +77,28 @@
   background-color: green !important;
   border-radius: 4px !important;
 }
+
 /* NON-VEG SWITCH */
 .nonVegSwitch .MuiSwitch-thumb {
   background-color: red !important;
   border-radius: 4px !important;
 }
+
 /* Track stays grey before toggle */
 .vegSwitch .MuiSwitch-track,
 .nonVegSwitch .MuiSwitch-track {
   background-color: #5e5a5a !important;
   opacity: 1 !important;
 }
+
 /* Track turns green when Veg is ON */
-.vegSwitch .Mui-checked + .MuiSwitch-track {
+.vegSwitch .Mui-checked+.MuiSwitch-track {
   background-color: green !important;
   opacity: 1 !important;
 }
+
 /* Track turns red when Non-Veg is ON */
-.nonVegSwitch .Mui-checked + .MuiSwitch-track {
+.nonVegSwitch .Mui-checked+.MuiSwitch-track {
   background-color: red !important;
   opacity: 1 !important;
 }
@@ -89,27 +122,44 @@
   position: relative;
   transition: transform 0.3s ease;
 }
+
 .addDishCard:hover {
   transform: scale(1.05);
 }
+
 .addDishCardContent {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .addDishIcon {
   font-size: 40px !important;
 }
+
 .chooseImageBtn {
   margin-top: 16px !important;
 }
+
 .dishImagePreview {
   margin-top: 16px;
   border: 1px solid #eeeeee;
 }
+
 .addDishActions {
   margin-top: 16px;
   display: flex;
   justify-content: space-between;
   width: 100%;
+}
+
+@media (max-width:445px) {
+  .categoryFilter {
+    display: none;
+  }
+
+  .titleBox .categoryFilter {
+    display: block;
+    flex-shrink: 0;
+  }
 }

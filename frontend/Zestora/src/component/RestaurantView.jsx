@@ -19,6 +19,7 @@ import AddIcon from "@mui/icons-material/Add";
 import SquareIcon from "@mui/icons-material/Stop"; // solid square icon
 import styles from "./RestaurantView.module.css";
 import DishListCard from "./DishListCard";
+import MenuItem from "@mui/material/MenuItem";
 
 // ✅ RTK Query hooks
 import {
@@ -34,6 +35,7 @@ const RestaurantView = () => {
   const role = location.state ? location.state.role : null;
   const isOwner = role === "OWNER";
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState("ALL");
 
   const { data: restaurant, isLoading } = useGetRestaurantByIdQuery(id, {
     skip: !id,
@@ -137,6 +139,40 @@ const RestaurantView = () => {
     }
   }, [location.state]);
 
+  // -------------------------------
+  // CATEGORY EXTRACTION (safe before returns)
+  // -------------------------------
+  let uniqueCategories = [];
+  let categories = [];
+
+  if (restaurant?.dishes) {
+    uniqueCategories = [
+      ...new Set(
+        restaurant.dishes
+          .map((dish) => dish.category?.trim() || "")
+          .filter((c) => c !== "")
+      ),
+    ];
+
+    categories =
+      uniqueCategories.length > 1
+        ? ["ALL", ...uniqueCategories]
+        : uniqueCategories;
+  }
+
+  // -------------------------------
+  // CATEGORY SYNC HOOK (must be before early returns)
+  // -------------------------------
+  useEffect(() => {
+    if (!categories.length) return;
+
+    if (categories.length === 1) {
+      setSelectedCategory(categories[0]);
+    } else if (!categories.includes(selectedCategory)) {
+      setSelectedCategory("ALL");
+    }
+  }, [categories]);
+
   if (isLoading) {
     return <Typography variant="h6">Loading restaurant...</Typography>;
   }
@@ -152,22 +188,57 @@ const RestaurantView = () => {
     const matchesSearch = dish.name
       .toLowerCase()
       .includes(searchQuery.toLowerCase());
-    const matchesFilter =
+
+    const matchesVeg =
       vegFilter === "all" ? true : vegFilter === "veg" ? dish.veg : !dish.veg;
 
-    return matchesSearch && matchesFilter;
+    const matchesCategory =
+      selectedCategory === "ALL"
+        ? true
+        : dish.category?.toLowerCase() === selectedCategory.toLowerCase();
+
+    return matchesSearch && matchesVeg && matchesCategory;
   });
 
   return (
     <Box className={styles.restaurantView}>
-      <Typography
-        variant="h4"
-        align="left"
-        gutterBottom
-        className={styles.restaurantName}
-      >
-        {restaurant.name}
-      </Typography>
+      <Box className={styles.titleBox}>
+        <Typography
+          variant="h4"
+          align="left"
+          gutterBottom
+          className={styles.restaurantName}
+        >
+          {restaurant.name}
+        </Typography>
+        {categories.length > 0 && (
+          <Box className={styles.categoryFilter}>
+            <TextField
+              select
+              size="small"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              sx={{
+                minWidth: 100,
+                bgcolor: "background.paper",
+                "& .MuiOutlinedInput-root fieldset": {
+                  borderWidth: "1px",
+                },
+                "& .MuiOutlinedInput-root.Mui-focused fieldset": {
+                  borderColor: "grey.500",
+                  borderWidth: "1px",
+                },
+              }}
+            >
+              {categories.map((cat) => (
+                <MenuItem key={cat} value={cat}>
+                  {cat}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+        )}
+      </Box>
 
       {/* 🔎 Search + Veg/Non-Veg Switches */}
       <Box className={styles.filterBar}>
@@ -190,6 +261,33 @@ const RestaurantView = () => {
             },
           }}
         />
+        {categories.length > 0 && (
+          <Box className={styles.categoryFilter}>
+            <TextField
+              select
+              size="small"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              sx={{
+                minWidth: 100,
+                bgcolor: "background.paper",
+                "& .MuiOutlinedInput-root fieldset": {
+                  borderWidth: "1px",
+                },
+                "& .MuiOutlinedInput-root.Mui-focused fieldset": {
+                  borderColor: "grey.500",
+                  borderWidth: "1px",
+                },
+              }}
+            >
+              {categories.map((cat) => (
+                <MenuItem key={cat} value={cat}>
+                  {cat}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+        )}
 
         <Box className={styles.switchFilters}>
           <FormControlLabel
