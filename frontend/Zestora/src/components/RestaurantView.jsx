@@ -17,7 +17,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Switch from "@mui/material/Switch";
 import AddIcon from "@mui/icons-material/Add";
 import SquareIcon from "@mui/icons-material/Stop"; // solid square icon
-import styles from "./RestaurantView.module.css";
+import styles from "../styles/RestaurantView.module.css";
 import DishListCard from "./DishListCard";
 import MenuItem from "@mui/material/MenuItem";
 
@@ -26,7 +26,7 @@ import {
   useGetRestaurantByIdQuery,
   useDeleteDishMutation,
   useAddDishMutation,
-} from "./redux/services/restaurantApi";
+} from "../redux/services/restaurantApi";
 
 const RestaurantView = () => {
   const location = useLocation();

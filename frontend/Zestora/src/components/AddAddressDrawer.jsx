@@ -17,7 +17,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import Map from "react-map-gl/maplibre";
 import axios from "axios";
-import styles from "./AddAddressDrawer.module.css";
+import styles from "../styles/AddAddressDrawer.module.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useSelector } from "react-redux";
 import { useTheme } from "@mui/material/styles";
@@ -25,7 +25,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   useAddAddressMutation,
   useUpdateAddressMutation,
-} from "./redux/services/customerApi";
+} from "../redux/services/customerApi";
 
 const AddAddressDrawer = ({ open, onClose, onSave, editingAddress }) => {
   const mapRef = useRef();

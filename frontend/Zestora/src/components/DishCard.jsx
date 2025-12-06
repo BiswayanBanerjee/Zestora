@@ -18,11 +18,11 @@ import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
-import { useUpdateDishMutation } from "./redux/services/restaurantApi"; // ✅ RTK Query
-import styles from "./DishCard.module.css"; // ✅ CSS module import
+import { useUpdateDishMutation } from "../redux/services/restaurantApi"; // ✅ RTK Query
+import styles from "../styles/DishCard.module.css"; // ✅ CSS module import
 import { useSelector, useDispatch } from "react-redux";
-import { updateCartSuccess } from "./redux/slices/customerSlice";
-import { useUpdateCartMutation } from "./redux/services/customerApi";
+import { updateCartSuccess } from "../redux/slices/customerSlice";
+import { useUpdateCartMutation } from "../redux/services/customerApi";
 import RamenDiningOutlinedIcon from "@mui/icons-material/RamenDiningOutlined";
 
 const DishCard = React.memo(({ dish, isOwner, onDelete, restaurantId }) => {

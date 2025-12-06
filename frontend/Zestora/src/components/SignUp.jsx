@@ -14,8 +14,8 @@ import {
   useSignupMutation,
   useResendOtpMutation,
   useVerifyOtpMutation,
-} from './redux/services/authApi';
-import { useAddCustomerMutation } from './redux/services/customerApi';
+} from '../redux/services/authApi';
+import { useAddCustomerMutation } from '../redux/services/customerApi';
 
 const Signup = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();

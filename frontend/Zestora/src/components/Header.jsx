@@ -17,17 +17,17 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown"; // ▼ Dropdo
 import SearchIcon from "@mui/icons-material/Search";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { clearCredentials } from "./redux/slices/authSlice";
-import { useGetCartQuery } from "./redux/services/customerApi";
-import { setCustomerData, clearCustomer } from "./redux/slices/customerSlice"; // ✅ new
-import styles from "./Header.module.css";
+import { clearCredentials } from "../redux/slices/authSlice";
+import { useGetCartQuery } from "../redux/services/customerApi";
+import { setCustomerData, clearCustomer } from "../redux/slices/customerSlice"; // ✅ new
+import styles from "../styles/Header.module.css";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import MonitorIcon from "@mui/icons-material/Monitor";
 import Paper from "@mui/material/Paper";
 import List from "@mui/material/List";
-import { useGetRestaurantsQuery } from "./redux/services/restaurantApi";
-import { updateCartSuccess } from "./redux/slices/customerSlice";
+import { useGetRestaurantsQuery } from "../redux/services/restaurantApi";
+import { updateCartSuccess } from "../redux/slices/customerSlice";
 
 const Header = ({ setThemePreference }) => {
   const dispatch = useDispatch();

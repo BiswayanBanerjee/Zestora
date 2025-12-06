@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import {
   useGetCartQuery,
   useUpdateCartMutation,
-} from './redux/services/customerApi';
+} from '../redux/services/customerApi';
 
 const DishDetail = () => {
   const { state } = useLocation();

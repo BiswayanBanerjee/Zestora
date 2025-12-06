@@ -12,15 +12,15 @@ import { useTheme } from "@mui/material/styles";
 import { Delete } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import styles from "../styles/DishList.module.css";
 
 import {
   useDeleteRestaurantMutation,
   useToggleApprovalMutation,
   useToggleAvailabilityMutation,
   useFetchStatusesQuery,
-} from './redux/services/restaurantApi';
+} from '../redux/services/restaurantApi';
 
-import './DishList.css';
 
 const DishList = ({ restaurants = [] }) => {
   const user = useSelector((state) => state.auth.user);
@@ -129,37 +129,37 @@ const DishList = ({ restaurants = [] }) => {
   };
 
   return (
-    <div className="restaurantGridContainer">
+    <div className={styles.restaurantGridContainer}>
       {filteredRestaurants.length > 0 ? (
         filteredRestaurants.map((restaurant) => (
-          <div key={restaurant.id} className="restaurantGridItem">
+          <div key={restaurant.id} className={styles.restaurantGridItem}>
             <Box
               onClick={() => handleNavigate(restaurant)}
-              className="restaurantCard"
+              className={styles.restaurantCard}
             >
               {/* 🔹 Image with overlay badges */}
-              <Box className="restaurantImageWrapper">
+              <Box className={styles.restaurantImageWrapper}>
                 <img
                   src={restaurant.imageUrl || "/placeholder.jpg"}
                   alt={restaurant.name}
-                  className="restaurantImage"
+                  className={styles.restaurantImage}
                 />
 
                 {/* Top-left badge */}
-                <Box className="badgeTopLeft">Free delivery</Box>
+                <Box className={styles.badgeTopLeft}>Free delivery</Box>
 
                 {/* Bottom badge */}
-                <Box className="badgeBottom">
+                <Box className={styles.badgeBottom}>
                   ITEMS AT ₹{restaurant.dishes?.[0]?.price || 99}
                 </Box>
               </Box>
 
               {/* 🔹 Restaurant details below */}
-              <Box className="restaurantDetails">
-                <Typography variant="h6" className="restaurantTitle">
+              <Box className={styles.restaurantDetails}>
+                <Typography variant="h6" className={styles.restaurantTitle}>
                   {restaurant.name}
                 </Typography>
-                <Typography variant="body2" className="restaurantMeta">
+                <Typography variant="body2" className={styles.restaurantMeta}>
                   ⭐ {restaurant.rating} •{" "}
                   {restaurant.deliveryTime || "20-30 mins"}
                 </Typography>

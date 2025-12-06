@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { TextField, Button, Box, Typography, Paper } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "./redux/services/authApi"; // ✅ RTK Query
+import { useLoginMutation } from "../redux/services/authApi"; // ✅ RTK Query
 import { useDispatch } from "react-redux";
-import { setCredentials } from "./redux/slices/authSlice"; // ✅ save token+user
+import { setCredentials } from "../redux/slices/authSlice"; // ✅ save token+user
 
 const Login = () => {
   const {

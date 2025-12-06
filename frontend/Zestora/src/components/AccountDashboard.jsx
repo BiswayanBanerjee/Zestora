@@ -13,13 +13,13 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import {
   useGetCustomerByIdQuery,
   useAddOrderMutation,
-} from "./redux/services/customerApi";
-import { useGetRestaurantsQuery } from "./redux/services/restaurantApi";
-import { useGetDishesQuery } from "./redux/services/dishApi";
-import { setCustomer } from "./redux/slices/customerSlice";
+} from "../redux/services/customerApi";
+import { useGetRestaurantsQuery } from "../redux/services/restaurantApi";
+import { useGetDishesQuery } from "../redux/services/dishApi";
+import { setCustomer } from "../redux/slices/customerSlice";
 import Profile from "./Profile";
-import styles from "./AccountDashboard.module.css";
-import { useDeleteAddressMutation } from "./redux/services/customerApi";
+import styles from "../styles/AccountDashboard.module.css";
+import { useDeleteAddressMutation } from "../redux/services/customerApi";
 import AddAddressDrawer from "./AddAddressDrawer";
 // const AddAddressDrawer = React.lazy(() => import("./AddAddressDrawer"));
 

@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import styles from "./TopCategories.module.css";
+import styles from "../styles/TopCategories.module.css";
 
 const categories = [
   { name: "Biryani", img: "/categories/biryani.png" },

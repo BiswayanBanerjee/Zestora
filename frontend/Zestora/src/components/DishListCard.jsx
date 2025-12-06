@@ -4,10 +4,10 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import DishCard from "./DishCard";
-import styles from "./DishListCard.module.css"; // ✅ CSS module import
+import styles from "../styles/DishListCard.module.css"; // ✅ CSS module import
 import { useTheme } from "@mui/material/styles";
-import { useUpdateCartMutation } from "./redux/services/customerApi";
-import { updateCartSuccess } from "./redux/slices/customerSlice";
+import { useUpdateCartMutation } from "../redux/services/customerApi";
+import { updateCartSuccess } from "../redux/slices/customerSlice";
 import { useSelector, useDispatch } from "react-redux";
 import RamenDiningOutlinedIcon from '@mui/icons-material/RamenDiningOutlined';
 

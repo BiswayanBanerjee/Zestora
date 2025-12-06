@@ -15,11 +15,11 @@ import { Add, Remove, Delete } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import styles from "./OrderForm.module.css";
+import styles from "../styles/OrderForm.module.css";
 import { useTheme } from "@mui/material/styles";
 import AddAddressDrawer from "./AddAddressDrawer";
 // const AddAddressDrawer = React.lazy(() => import("./AddAddressDrawer"));
-import { updateCartSuccess } from "./redux/slices/customerSlice";
+import { updateCartSuccess } from "../redux/slices/customerSlice";
 
 // RTK Query imports
 import {
@@ -27,9 +27,9 @@ import {
   useUpdateCartMutation,
   useGetOrdersQuery,
   useAddOrderMutation,
-} from "./redux/services/customerApi";
-import { useGetDishesQuery } from "./redux/services/dishApi";
-import { useGetRestaurantsQuery } from "./redux/services/restaurantApi";
+} from "../redux/services/customerApi";
+import { useGetDishesQuery } from "../redux/services/dishApi";
+import { useGetRestaurantsQuery } from "../redux/services/restaurantApi";
 
 const getDistanceTime = async (start, end) => {
   try {

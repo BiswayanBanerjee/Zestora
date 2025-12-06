@@ -17,17 +17,17 @@ import {
   useSignupMutation,
   useVerifyOtpMutation,
   useGoogleLoginMutation,
-} from "./redux/services/authApi";
-import { useAddCustomerMutation } from "./redux/services/customerApi";
+} from "../redux/services/authApi";
+import { useAddCustomerMutation } from "../redux/services/customerApi";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "./redux/slices/authSlice";
-import styles from "./AuthDrawer.module.css";
-import { auth, provider } from "./firebaseConfig";
+import { setCredentials } from "../redux/slices/authSlice";
+import styles from "../styles/AuthDrawer.module.css";
+import { auth, provider } from "../config/firebaseConfig";
 import { signInWithPopup } from "firebase/auth";
-import { customerApi } from "./redux/services/customerApi";
-import { useLazyCheckUserQuery } from "./redux/services/authApi";
-import { setCustomer, setCustomerData } from "./redux/slices/customerSlice";
-import { store } from "./redux/store";
+import { customerApi } from "../redux/services/customerApi";
+import { useLazyCheckUserQuery } from "../redux/services/authApi";
+import { setCustomer, setCustomerData } from "../redux/slices/customerSlice";
+import { store } from "../redux/store";
 
 const AuthDrawer = ({ open, onClose }) => {
   const dispatch = useDispatch();

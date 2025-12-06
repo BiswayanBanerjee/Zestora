@@ -13,13 +13,13 @@ import {
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
-import { supabase } from "./supabaseClient";
+import { supabase } from "../config/supabaseClient";
 import {
   useGetCustomerByIdQuery,
   useUpdateCustomerMutation,
-} from "./redux/services/customerApi";
-import { setCustomer } from "./redux/slices/customerSlice";
-import styles from "./Profile.module.css";
+} from "../redux/services/customerApi";
+import { setCustomer } from "../redux/slices/customerSlice";
+import styles from "../styles/Profile.module.css";
 
 const Profile = ({ open, onClose }) => {
   const dispatch = useDispatch();

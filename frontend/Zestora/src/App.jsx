@@ -6,20 +6,20 @@ import Typography from "@mui/material/Typography";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import LinearProgress from "@mui/material/LinearProgress";
-import Header from "./component/Header";
-import DishManager from "./component/DishManager";
-import Footer from "./component/Footer";
-import PrivateRoute from "./component/PrivateRoute";
-import useAppTheme from "./theme";
-import { useGetRestaurantsQuery } from "./component/redux/services/restaurantApi";
-import AuthDrawer from "./component/AuthDrawer";
-// const Navbar = React.lazy(() => import("./component/Navbar"));
-const OrderForm = React.lazy(() => import("./component/OrderForm"));
-const DishDetail = React.lazy(() => import("./component/DishDetail"));
+import Header from "./components/Header";
+import DishManager from "./components/DishManager";
+import Footer from "./components/Footer";
+import PrivateRoute from "./components/PrivateRoute";
+import useAppTheme from "./theme/theme";
+import { useGetRestaurantsQuery } from "./redux/services/restaurantApi";
+import AuthDrawer from "./components/AuthDrawer";
+// const Navbar = React.lazy(() => import("./components/Navbar"));
+const OrderForm = React.lazy(() => import("./components/OrderForm"));
+const DishDetail = React.lazy(() => import("./components/DishDetail"));
 const AccountDashboard = React.lazy(() =>
-  import("./component/AccountDashboard")
+  import("./components/AccountDashboard")
 );
-const RestaurantView = React.lazy(() => import("./component/RestaurantView"));
+const RestaurantView = React.lazy(() => import("./components/RestaurantView"));
 
 const App = () => {
   const { theme, setThemePreference } = useAppTheme();
