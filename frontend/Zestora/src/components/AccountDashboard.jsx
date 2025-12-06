@@ -119,6 +119,31 @@ export default function AccountDashboard() {
     return Array.from(missing);
   }, [customer, dishLookup]);
 
+  // --- FAVOURITES HOOKS (must be BEFORE any return!) ---
+  const favouriteIds = customer?.favourites || [];
+
+  // Build lookup maps
+  const restaurantMap = useMemo(() => {
+    const map = new Map();
+    restaurants.forEach((r) => map.set(String(r.id), r));
+    return map;
+  }, [restaurants]);
+
+  const dishMap = useMemo(() => {
+    const map = new Map();
+    allDishes.forEach((d) => map.set(String(d.id), d));
+    return map;
+  }, [allDishes]);
+
+  // Split favourites by entity type
+  const favouriteRestaurants = favouriteIds
+    .map((id) => restaurantMap.get(String(id)))
+    .filter(Boolean);
+
+  const favouriteDishes = favouriteIds
+    .map((id) => dishMap.get(String(id)))
+    .filter(Boolean);
+
   useEffect(() => {
     if (customer) dispatch(setCustomer(customer));
     if (missingDishIds.length > 0) {
@@ -428,12 +453,62 @@ export default function AccountDashboard() {
     );
   };
 
-  const renderFavourites = () => (
-    <section className={styles.placeholder}>
-      <h2 className={styles.sectionTitle}>Favourites</h2>
-      <p>Coming soon — favourite restaurants & dishes will appear here.</p>
-    </section>
-  );
+  const renderFavourites = () => {
+    const hasRestaurants = favouriteRestaurants.length > 0;
+    const hasDishes = favouriteDishes.length > 0;
+
+    if (!hasRestaurants && !hasDishes) {
+      return (
+        <section>
+          <div className={styles.empty}>No favourites yet.</div>
+        </section>
+      );
+    }
+
+    return (
+      <section>
+        {/* ❤️ Favourite Restaurants */}
+        {hasRestaurants && (
+          <>
+            <h3 className={styles.sectionTitle}>Restaurants</h3>
+            <div className={styles.favGrid}>
+              {favouriteRestaurants.map((rest) => (
+                <div key={rest.id} className={styles.favCard}>
+                  <div className={styles.favThumb}>
+                    <img src={rest.imageUrl} alt={rest.name} />
+                  </div>
+                  <div className={styles.favInfo}>
+                    <div className={styles.favName}>{rest.name}</div>
+                    <div className={styles.favSub}>{rest.address}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* ❤️ Favourite Dishes */}
+        {hasDishes && (
+          <>
+            <h3 className={styles.sectionTitle}>Dishes</h3>
+            <div className={styles.favGrid}>
+              {favouriteDishes.map((dish) => (
+                <div key={dish.id} className={styles.favCard}>
+                  <div className={styles.favThumb}>
+                    <img src={dish.imageUrl} alt={dish.name} />
+                  </div>
+                  <div className={styles.favInfo}>
+                    <div className={styles.favName}>{dish.name}</div>
+                    <div className={styles.favSub}>₹{dish.price}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </section>
+    );
+  };
 
   const renderPayments = () => (
     <section className={styles.placeholder}>

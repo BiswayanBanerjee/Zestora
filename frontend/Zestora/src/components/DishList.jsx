@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
@@ -9,33 +9,32 @@ import Switch from "@mui/material/Switch";
 import IconButton from "@mui/material/IconButton";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-import { Delete } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Delete } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import styles from "../styles/DishList.module.css";
-
 import {
   useDeleteRestaurantMutation,
   useToggleApprovalMutation,
   useToggleAvailabilityMutation,
   useFetchStatusesQuery,
-} from '../redux/services/restaurantApi';
-
+} from "../redux/services/restaurantApi";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { useUpdateFavouritesMutation } from "../redux/services/customerApi"; // :contentReference[oaicite:0]{index=0}
+import { setCustomerData } from "../redux/slices/customerSlice"; // :contentReference[oaicite:1]{index=1}
 
 const DishList = ({ restaurants = [] }) => {
   const user = useSelector((state) => state.auth.user);
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [role, setRole] = useState(null);
   const [isPollingPaused, setIsPollingPaused] = useState(false);
-
   const [deleteRestaurant] = useDeleteRestaurantMutation();
   const [toggleApproval] = useToggleApprovalMutation();
   const [toggleAvailability] = useToggleAvailabilityMutation();
-
   const { data: statuses } = useFetchStatusesQuery(
     filteredRestaurants.map((r) => r.id),
     {
@@ -43,6 +42,11 @@ const DishList = ({ restaurants = [] }) => {
       pollingInterval: isPollingPaused ? 0 : 15000,
     }
   );
+  const dispatch = useDispatch();
+  const favouriteRestaurants = useSelector(
+    (state) => state.customer.customerData.favourites || []
+  );
+  const [updateFavourites] = useUpdateFavouritesMutation();
 
   useEffect(() => {
     let filtered = restaurants;
@@ -128,6 +132,30 @@ const DishList = ({ restaurants = [] }) => {
     }
   };
 
+  const handleToggleFavouriteRestaurant = async (restaurantId) => {
+    if (!user) {
+      alert("Please login first");
+      return;
+    }
+
+    let updated = [...favouriteRestaurants];
+
+    if (updated.includes(String(restaurantId))) {
+      updated = updated.filter((id) => id !== String(restaurantId));
+    } else {
+      updated.push(String(restaurantId));
+    }
+
+    // Update backend
+    await updateFavourites({
+      id: user.email,
+      favourites: updated,
+    });
+
+    // Update Redux state
+    dispatch(setCustomerData({ favourites: updated }));
+  };
+
   return (
     <div className={styles.restaurantGridContainer}>
       {filteredRestaurants.length > 0 ? (
@@ -139,6 +167,21 @@ const DishList = ({ restaurants = [] }) => {
             >
               {/* 🔹 Image with overlay badges */}
               <Box className={styles.restaurantImageWrapper}>
+                {/* ❤️ Favorite Icon for Restaurant */}
+                <Box
+                  className={styles.favIcon}
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent navigating into restaurant
+                    handleToggleFavouriteRestaurant(restaurant.id);
+                  }}
+                >
+                  {favouriteRestaurants.includes(String(restaurant.id)) ? (
+                    <FavoriteIcon className={styles.favFilled} />
+                  ) : (
+                    <FavoriteBorderIcon className={styles.favOutline} />
+                  )}
+                </Box>
+
                 <img
                   src={restaurant.imageUrl || "/placeholder.jpg"}
                   alt={restaurant.name}
@@ -180,7 +223,6 @@ const DishList = ({ restaurants = [] }) => {
       )}
     </div>
   );
-
 };
 
 export default DishList;

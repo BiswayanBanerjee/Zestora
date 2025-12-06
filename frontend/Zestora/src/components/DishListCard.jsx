@@ -9,7 +9,11 @@ import { useTheme } from "@mui/material/styles";
 import { useUpdateCartMutation } from "../redux/services/customerApi";
 import { updateCartSuccess } from "../redux/slices/customerSlice";
 import { useSelector, useDispatch } from "react-redux";
-import RamenDiningOutlinedIcon from '@mui/icons-material/RamenDiningOutlined';
+import RamenDiningOutlinedIcon from "@mui/icons-material/RamenDiningOutlined";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { useUpdateFavouritesMutation } from "../redux/services/customerApi"; // :contentReference[oaicite:0]{index=0}
+import { setCustomerData } from "../redux/slices/customerSlice"; // :contentReference[oaicite:1]{index=1}
 
 const DishListCard = ({ dish }) => {
   const imageUrl = `/${dish.imageUrl}`;
@@ -27,6 +31,11 @@ const DishListCard = ({ dish }) => {
   const dispatch = useDispatch();
   const [updateCart] = useUpdateCartMutation();
   const [imageError, setImageError] = useState(false);
+  const [updateFavourites] = useUpdateFavouritesMutation();
+  const favouriteItems = useSelector(
+    (state) => state.customer.customerData.favourites || []
+  );
+  const isFavourite = favouriteItems.includes(String(dish.id));
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 600);
@@ -114,6 +123,34 @@ const DishListCard = ({ dish }) => {
     dispatch(updateCartSuccess({ cartItems: newCart }));
   };
 
+  const handleToggleFavourite = async () => {
+    if (!user) {
+      alert("Please login first");
+      return;
+    }
+
+    let updatedFavourites = [...favouriteItems];
+
+    if (isFavourite) {
+      // remove
+      updatedFavourites = updatedFavourites.filter(
+        (id) => id !== String(dish.id)
+      );
+    } else {
+      // add
+      updatedFavourites.push(String(dish.id));
+    }
+
+    // Update backend API
+    await updateFavourites({
+      id: user.email,
+      favourites: updatedFavourites,
+    });
+
+    // Update Redux
+    dispatch(setCustomerData({ favourites: updatedFavourites }));
+  };
+
   return (
     <>
       <Box
@@ -162,6 +199,15 @@ const DishListCard = ({ dish }) => {
             !dish.available ? styles.notAvailableBox : ""
           }`}
         >
+          {/* ❤️ Favourite Icon */}
+          <Box className={styles.favIcon} onClick={handleToggleFavourite}>
+            {isFavourite ? (
+              <FavoriteIcon className={styles.favFilled} />
+            ) : (
+              <FavoriteBorderIcon className={styles.favOutline} />
+            )}
+          </Box>
+
           {!imageError ? (
             <img
               src={imageUrl}

@@ -774,3 +774,53 @@
     /* shrink button width */
   }
 }
+
+.favGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+  margin: 12px 0 28px;
+}
+
+.favCard {
+  background: var(--mui-palette-card-bg);
+  border-radius: 8px;
+  border: 1px solid var(--mui-palette-divider);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.favCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 6px 18px rgba(0,0,0,0.08);
+}
+
+.favThumb {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  background: var(--mui-palette-action-hover);
+}
+
+.favThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.favInfo {
+  padding: 12px;
+}
+
+.favName {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--mui-palette-text-primary);
+}
+
+.favSub {
+  font-size: 0.9rem;
+  color: var(--mui-palette-text-secondary);
+}
