@@ -3,13 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA87KC8FovVm0Et-OMhdvpVEf9uSWyGMFU",
-  authDomain: "zestora-dc0ed.firebaseapp.com",
-  projectId: "zestora-dc0ed",
-  storageBucket: "zestora-dc0ed.firebasestorage.app",
-  messagingSenderId: "954677299621",
-  appId: "1:954677299621:web:d7d1691adb67613129804c",
-  measurementId: "G-Z0XMKZW3CF",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
