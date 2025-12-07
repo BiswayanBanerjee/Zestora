@@ -21,6 +21,7 @@ import Profile from "./Profile";
 import styles from "../styles/AccountDashboard.module.css";
 import { useDeleteAddressMutation } from "../redux/services/customerApi";
 import AddAddressDrawer from "./AddAddressDrawer";
+import { useLocation, useNavigate } from "react-router-dom";
 // const AddAddressDrawer = React.lazy(() => import("./AddAddressDrawer"));
 
 const TABS = [
@@ -55,27 +56,32 @@ export default function AccountDashboard() {
   const muiTheme = useTheme(); // kept for safe inline fallbacks only
   const userEmail = auth?.user?.email || auth?.user?.sub || null;
   const [openProfile, setOpenProfile] = useState(false);
-  const [activeTab, setActiveTab] = useState("orders");
+  const location = useLocation();
+  const initialTab = location.state?.tab || "orders";
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [deleteAddress] = useDeleteAddressMutation();
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [addresses, setAddresses] = useState([]);
   const [editingAddress, setEditingAddress] = useState(null);
-
+  const navigate = useNavigate();
   // Data hooks (always called)
   const {
     data: customer,
     isLoading: customerLoading,
     refetch: refetchCustomer,
   } = useGetCustomerByIdQuery(userEmail, { skip: !userEmail });
-
   const { data: restaurants = [], isLoading: restaurantsLoading } =
     useGetRestaurantsQuery();
-
   const { data: allDishes = [], isLoading: dishesLoading } =
     useGetDishesQuery();
-
   const [addOrder, { isLoading: addingOrder }] = useAddOrderMutation();
+
+  useEffect(() => {
+    if (location.state?.tab) {
+      setActiveTab(location.state.tab);
+    }
+  }, [location.state]);
 
   // dish lookup (from dishes API first, restaurants second)
   const dishLookup = useMemo(() => {
@@ -120,7 +126,9 @@ export default function AccountDashboard() {
   }, [customer, dishLookup]);
 
   // --- FAVOURITES HOOKS (must be BEFORE any return!) ---
-  const favouriteIds = customer?.favourites || [];
+  const favouriteIds = useSelector(
+    (state) => state.customer.customerData.favourites
+  );
 
   // Build lookup maps
   const restaurantMap = useMemo(() => {
@@ -465,6 +473,16 @@ export default function AccountDashboard() {
       );
     }
 
+    const lower = searchTerm.trim().toLowerCase();
+
+    const filteredFavouriteRestaurants = favouriteRestaurants.filter((rest) =>
+      rest.name.toLowerCase().includes(lower)
+    );
+
+    const filteredFavouriteDishes = favouriteDishes.filter((dish) =>
+      dish.name.toLowerCase().includes(lower)
+    );
+
     return (
       <section>
         {/* ❤️ Favourite Restaurants */}
@@ -472,8 +490,16 @@ export default function AccountDashboard() {
           <>
             <h3 className={styles.sectionTitle}>Restaurants</h3>
             <div className={styles.favGrid}>
-              {favouriteRestaurants.map((rest) => (
-                <div key={rest.id} className={styles.favCard}>
+              {filteredFavouriteRestaurants.map((rest) => (
+                <div
+                  key={rest.id}
+                  className={styles.favCard}
+                  onClick={() =>
+                    navigate(`/restaurant/${rest.id}`, {
+                      state: { restaurant: rest },
+                    })
+                  }
+                >
                   <div className={styles.favThumb}>
                     <img src={rest.imageUrl} alt={rest.name} />
                   </div>
@@ -492,8 +518,22 @@ export default function AccountDashboard() {
           <>
             <h3 className={styles.sectionTitle}>Dishes</h3>
             <div className={styles.favGrid}>
-              {favouriteDishes.map((dish) => (
-                <div key={dish.id} className={styles.favCard}>
+              {filteredFavouriteDishes.map((dish) => (
+                <div
+                  key={dish.id}
+                  className={styles.favCard}
+                  onClick={() => {
+                    const parentRestaurant = restaurants.find((r) =>
+                      r.dishes?.some((d) => String(d.id) === String(dish.id))
+                    );
+
+                    if (parentRestaurant) {
+                      navigate(`/restaurant/${parentRestaurant.id}`, {
+                        state: { scrollToDish: dish.name }, // VERY IMPORTANT
+                      });
+                    }
+                  }}
+                >
                   <div className={styles.favThumb}>
                     <img src={dish.imageUrl} alt={dish.name} />
                   </div>
@@ -646,7 +686,12 @@ export default function AccountDashboard() {
             <h2 className={styles.sectionTitle}>Favourites</h2>
             <div className={styles.searchBox}>
               <SearchIcon />
-              <input placeholder="Search favourite dishes or restaurants..." />
+              <input
+                type="text"
+                placeholder="Search favourite dishes or restaurants..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
           </div>
         );

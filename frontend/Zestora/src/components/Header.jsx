@@ -880,8 +880,23 @@ const Header = ({ setThemePreference }) => {
                   Profile
                 </MenuItem>
 
-                <MenuItem className={styles.profileMenuItem}>Orders</MenuItem>
-                <MenuItem className={styles.profileMenuItem}>
+                <MenuItem
+                  className={styles.profileMenuItem}
+                  onClick={() => {
+                    navigate("/profile", { state: { tab: "orders" } });
+                    setProfileAnchorEl(null);
+                  }}
+                >
+                  Orders
+                </MenuItem>
+
+                <MenuItem
+                  className={styles.profileMenuItem}
+                  onClick={() => {
+                    navigate("/profile", { state: { tab: "favourites" } });
+                    setProfileAnchorEl(null);
+                  }}
+                >
                   Favourites
                 </MenuItem>
 

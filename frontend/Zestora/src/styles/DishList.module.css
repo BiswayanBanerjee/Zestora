@@ -43,6 +43,10 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  
+  -webkit-tap-highlight-color: transparent !important;
+
+
 }
 
 .restaurantCard:hover {
@@ -120,6 +124,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+   -webkit-tap-highlight-color: transparent !important;
+  pointer-events: auto;
 }
 
 
